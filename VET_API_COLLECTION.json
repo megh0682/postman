@@ -54,7 +54,7 @@
 							"formdata": [
 								{
 									"key": "upload",
-									"src": "C:\\Users\\meiyer\\Downloads\\USA_AL_Montgomery-Dannelly.Field.722260_TMY3_BASE.csv",
+									"src": "**/loadlocal_files/USA_AL_Montgomery-Dannelly.Field.722260_TMY3_BASE.csv",
 									"type": "file",
 									"enabled": true
 								},
@@ -547,7 +547,7 @@
 							"formdata": [
 								{
 									"key": "upload",
-									"src": "C:\\Users\\meiyer\\Downloads\\USA_AL_Montgomery-Dannelly.Field.722260_TMY3_BASE.csv",
+									"src": "**/loadlocal_files/USA_AL_Montgomery-Dannelly.Field.722260_TMY3_BASE.csv",
 									"type": "file",
 									"enabled": true
 								},
@@ -606,7 +606,7 @@
 							"formdata": [
 								{
 									"key": "upload",
-									"src": "C:\\Users\\meiyer\\Downloads\\USA_AL_Montgomery-Dannelly.Field.722260_TMY3_BASE.csv",
+									"src": "**/loadlocal_files/USA_AL_Montgomery-Dannelly.Field.722260_TMY3_BASE.csv",
 									"type": "file",
 									"enabled": true
 								},
