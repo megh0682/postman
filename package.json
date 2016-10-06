@@ -3,9 +3,9 @@
   "version": "1.0.0",
   "description": "",
   "scripts": {
-    "smoke_dev": "newman run **/VET_API_COLLECTION.json -e **/VET_API_DEV_Environment.json --reporters cli,html,json,junit --reporter-html-export **/result_dev.html --reporter-json-export **/result_dev.json --reporter-junit-export **/result_dev.xml || true",
-    "smoke_qa": "newman run **/VET_API_COLLECTION.json -e **/VET_API_QA_Environment.json --reporters cli,html,json,junit --reporter-html-export **/result_qa.html --reporter-json-export **/result_qa.json --reporter-junit-export **/result_qa.xml || true",
-    "smoke_stg": "newman run **/VET_API_COLLECTION.json -e **/VET_API_STG_Environment.json --reporters cli,html,json,junit --reporter-html-export **/result_stg.html --reporter-json-export **/result_stg.json --reporter-junit-export **/result_stg.xml || true" 
+    "smoke_dev": "newman run VET_API_COLLECTION.json -e VET_API_DEV_Environment.json --reporters cli,html,json,junit --reporter-html-export result_dev.html --reporter-json-export result_dev.json --reporter-junit-export result_dev.xml || true",
+    "smoke_qa": "newman run VET_API_COLLECTION.json -e VET_API_QA_Environment.json --reporters cli,html,json,junit --reporter-html-export result_qa.html --reporter-json-export result_qa.json --reporter-junit-export result_qa.xml || true",
+    "smoke_stg": "newman run VET_API_COLLECTION.json -e VET_API_STG_Environment.json --reporters cli,html,json,junit --reporter-html-export result_stg.html --reporter-json-export result_stg.json --reporter-junit-export result_stg.xml || true" 
   },
   "devDependencies": {
     "newman": "^2.0.5"
