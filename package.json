@@ -1,0 +1,15 @@
+{
+  "name": "VET",
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+
+    "smoke_dev": "newman run C://Users//meiyer//Desktop//Newman//VET//VET_API_COLLECTION.json -e C://Users//meiyer//Desktop//Newman//VET//VET_API_DEV_Environment.json --reporters cli,html,json,junit --reporter-html-export C://Users//meiyer//Desktop//Newman//VET//result_dev.html --reporter-json-export C://Users//meiyer//Desktop//Newman//VET//result_dev.json --reporter-junit-export C://Users//meiyer//Desktop//Newman//VET//result_dev.xml || true",
+    "smoke_qa": "newman run C://Users//meiyer//Desktop//Newman//VET//VET_API_COLLECTION.json -e C://Users//meiyer//Desktop//Newman//VET//VET_API_QA_Environment.json --reporters cli,html,json,junit --reporter-html-export C://Users//meiyer//Desktop//Newman//VET//result_qa.html --reporter-json-export C://Users//meiyer//Desktop//Newman//VET//result_qa.json --reporter-junit-export C://Users//meiyer//Desktop//Newman//VET//result_qa.xml || true"  },
+  "devDependencies": {
+    "newman": "^2.0.5"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
