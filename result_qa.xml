@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites name="VET_Smoke_Test_Scripts">
+  <testsuite name="POST loadlocal WITH UNIQUE NAME" id="bbe556f1-eccf-4db3-b942-552922b566a4" time="2110">
+    <testcase name="Status 201 - Resource Created"/>
+    <testcase name="id object exists in response"/>
+    <testcase name="name object exists in response"/>
+    <testcase name="model_input object exists in response"/>
+    <testcase name="upload object exists in response"/>
+  </testsuite>
+  <testsuite name="POST loadlocal WITH AN EXISTING NAME" id="4c2b8569-fdaf-45e5-931c-34b185049aac" time="1065">
+    <testcase name="Status 400 - Bad Request"/>
+  </testsuite>
+  <testsuite name="GET loadlocal" id="9cbf7ca1-bbcd-4c39-ab6d-8d8963604cb0" time="320">
+    <testcase name="Status 200 OK GET /VET/loadlocal"/>
+    <testcase name="Collection Not Empty GET /VET/loadlocal"/>
+  </testsuite>
+  <testsuite name="GET loadlocal PER PAGE NUMBER" id="ed4b198c-40a3-4b6a-a992-5db1f1fb0bbf" time="308">
+    <testcase name="Status 200 OK = GET /VET/loadlocal?page=2"/>
+  </testsuite>
+  <testsuite name="GET loadlocal FOR VALID PAGE NUMBER" id="2e548eac-1f97-440b-adf7-1f5e4654c46c" time="306">
+    <testcase name="Status 200 OK - Get Valid Page /VET/loadlocal?page=3"/>
+  </testsuite>
+  <testsuite name="GET loadlocal FOR INVALID PAGE NUMBER" id="b901b753-dd25-47aa-8fb6-6d5821ed8352" time="235">
+    <testcase name="Status 404 Not Found - Get Invalid Page /VET/loadlocal?page=A1"/>
+  </testsuite>
+  <testsuite name="GET loadlocal FOR VALID ID" id="08f53cd5-ee22-461a-b35f-ee5577649834" time="248">
+    <testcase name="Status 200 OK - GET /vet/loadlocal/83"/>
+  </testsuite>
+  <testsuite name="GET loadlocal FOR INVALID  ID" id="8ad56b78-eb8b-40d8-910e-27c1bb445e40" time="320">
+    <testcase name="Status 404 Not Found - GET Invalid id /vet/loadlocal/A1"/>
+  </testsuite>
+  <testsuite name="DELETE loadlocal WITH VALID EXISTANT ID" id="1e2a17ac-27eb-4740-b44c-18d61d026236" time="244">
+    <testcase name="loadlocal with id 83 deleted successfully"/>
+  </testsuite>
+  <testsuite name="GET loadlocal FOR VALID NON EXISTENT ID" id="d7af6563-f85f-44bd-9a7a-bab639f6404f" time="244">
+    <testcase name="Status 404 Not Found - GET /VET/loadlocal/83">
+      <failure type="AssertionFailure">
+        <![CDATA[Failed 1 times.]]>
+      </failure>
+    </testcase>
+  </testsuite>
+  <testsuite name="DELETE loadlocal WITH VALID NON EXISTANT ID" id="224fb433-4f70-40c1-84fb-66952011650f" time="246">
+    <testcase name="loadlocal with id 83 should not exist as it is already deleted">
+      <failure type="AssertionFailure">
+        <![CDATA[Failed 1 times.]]>
+      </failure>
+    </testcase>
+  </testsuite>
+  <testsuite name="CREATE NEW LOADLOCAL" id="c9d59d26-521f-4d08-8999-d2fd33428372" time="1771">
+    <testcase name="Status 201 - Resource Created"/>
+    <testcase name="id object exists in response"/>
+    <testcase name="name object exists in response"/>
+    <testcase name="model_input object exists in response"/>
+    <testcase name="upload object exists in response"/>
+  </testsuite>
+  <testsuite name="RUN /VET/QuoteEng SCENARIO" id="87cf1074-848b-402b-9950-4a3cb8daddf0" time="18687">
+    <testcase name="Status 201 - Resource Created"/>
+    <testcase name="imports_before object exist in the response"/>
+    <testcase name="imports_before object has 8760 elements"/>
+    <testcase name="imports_after object exist in the response"/>
+    <testcase name="imports_after object has 8760 elements"/>
+    <testcase name="bills object exist in the response"/>
+    <testcase name="fineng_output object exist in the response"/>
+  </testsuite>
+  <testsuite name="DELETE THE LOADLOCAL" id="5562eaba-8533-47cb-a2b0-58fda0b63164" time="347">
+    <testcase name="loadlocal with id 449 deleted successfully"/>
+  </testsuite>
+  <testsuite name="RUN /VET/QuoteEng USING EMPTY LOADLOCAL" id="3e6b52b2-0a90-46eb-8c20-e7e3ff0f398d" time="179">
+    <testcase name="Status 400 - Bad Request"/>
+  </testsuite>
+  <testsuite name="RUN /VET/QuoteEng USING NON EXISTENT LOADLOCAL" id="43ce96c0-4f3c-43d7-9ca6-c62d5c21993e" time="19413">
+    <testcase name="Status 400 - Bad Request">
+      <failure type="AssertionFailure">
+        <![CDATA[Failed 1 times.]]>
+      </failure>
+    </testcase>
+  </testsuite>
+</testsuites>
