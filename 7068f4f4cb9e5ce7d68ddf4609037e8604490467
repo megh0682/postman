@@ -1,1 +1,3 @@
 {"timestamp":"1475783283","v":0,"agent":"Jenkins(2.21) GitNotesJobLogger","url":"http://localhost:8080/job/npm_run/26/"}
+
+{"timestamp":"1475783298","v":0,"agent":"Jenkins(2.21) GitNotesJobLogger","url":"http://localhost:8080/job/npm_run/26/","status":"failure"}
