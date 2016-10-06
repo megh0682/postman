@@ -129,65 +129,6 @@
 					},
 					"response": []
 				},
-				/*{
-					"name": "POST loadlocal WITH AN EMPTY UPLOAD",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"type": "text/javascript",
-								"exec": "try{\n   //Assert the success code\n   tests[\"Status 400 - Bad Request\"] = responseCode.code === 400;\n   postman.setNextRequest(\"GET loadlocal\");\n}catch(e){\n   var errormessage = { 'method' : request.method, 'url' : request.url, 'error':e.message };\n   var temp = environment.error_collector? (postman.getEnvironmentVariable(\"error_collector\") + \" \" + \"|\" + \" \") : \"\";\n   postman.setEnvironmentVariable(\"error_collector\",temp + JSON.stringify(errormessage));\n   tests[\"Unexpected Error Occurred - \"+ e.message] = true === false;\n   postman.setNextRequest(null);\n}\n\n\n\n"
-							}
-						},
-						{
-							"listen": "prerequest",
-							"script": {
-								"type": "text/javascript",
-								"exec": "\n\n"
-							}
-						}
-					],
-					"request": {
-						"url": "{{URI}}/VET/loadlocal/",
-						"method": "POST",
-						"header": [
-							{
-								"key": "Accept",
-								"value": "application/json",
-								"description": ""
-							},
-							{
-								"key": "X-CSRFToken",
-								"value": "yGXetadw771nTTkNkankd9OeNAlbDqwsXOCUWLT3W7LgmxeCnIbkkyrXAFvQq5Ab",
-								"description": ""
-							},
-							{
-								"key": "Authorization",
-								"value": "Basic c21hcnRlbmVyZ3lTdXBlcnVzZXI6c3VucG93ZXIx",
-								"description": ""
-							}
-						],
-						"body": {
-							"mode": "formdata",
-							"formdata": [
-								{
-									"key": "upload",
-									"src": "",
-									"type": "file",
-									"enabled": true
-								},
-								{
-									"key": "name",
-									"value": "_postman_{{timestamp}}",
-									"type": "text",
-									"enabled": true
-								}
-							]
-						},
-						"description": "This request is a POST request to /VET/loadlocal/ endpoint.\nHere upload field accepts multipart/form data\nOnly required field here is name."
-					},
-					"response": []
-				},*/
 				{
 					"name": "GET loadlocal",
 					"event": [
