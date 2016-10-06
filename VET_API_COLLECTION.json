@@ -1,14 +1,639 @@
 {
 	"variables": [],
 	"info": {
-		"name": "VET API",
+		"name": "VET_Smoke_Test_Scripts",
 		"_postman_id": "824fe7c5-9bab-bb73-5b44-45ef52edd18f",
 		"description": "1) CRUD operations for /VET/loadlocal\n\n  Validations Checks\n\n - success code is 201 for POST at /VET/loadlocal\n - success code is 204 or 200 for DELETE at\n   /VET/loadlocal\n - error code is 404 for non existant valid loadlocal \n   DELETE at /VET/loadlocal\n - \"id object exists in response\"\n - \"name object exists in response\"\n - \"model_input object exists in response\"\n - \"upload object exists in response \n - \"loadlocal is uploaded on correct S3 server\"\n\n2) CRUD operations for /VET/QuoteEng \n\n    *Incorporated Python notebook sceanrio*\n\n   - Step 1 - Create a new loadlocal file using  /VET/loadlocal endpoint.\n\n   - Step 2 - Use the newly created loadlocal filename to run the POST at /VET/QuoteEng. Only changing fields in the request payload are as below. Rest are hardcoded valid values sent from Sugumar.\n\n\t'loadlocal'\n\t'pv_configuration.Shortname'\n\t'model_input_shortname'\n\n    - Step 3 - Delete the newly created loadlocal file\n\n  Validations Checks\n\n - success code is 201 for POST at /VET/QuoteEng\n - imports_before object exists in response\n - imports_after object exists in response\n - bills object exists in response\n - fineng_output object exists in response\n - error code is 400 for POST at /VET/QuoteEng with\n   empty loadlocal file.\n - error code is 400 for POST at /VET/QuoteEng with\n   valid but non existant loadlocal file.\n",
 		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
 	},
 	"item": [
 		{
-			"name": "CRUD /VET/QuoteEng",
+			"name": "CRUD /VET/loadlocal",
+			"description": "",
+			"item": [
+				{
+					"name": "POST loadlocal WITH UNIQUE NAME",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": "var expected_upload_url = environment.S3 + request.data.upload[0].name;\ntry{\n   //Assert the success code\n   tests[\"Status 201 - Resource Created\"] = responseCode.code === 201;\n   \n   if( responseCode.code === 201){\n   var json = JSON.parse(responseBody);\n   //Assert imports_after and imports_before has 8760 elements\n   tests[\"id object exists in response\"] = (typeof(json.id) !== \"undefined\");\n   tests[\"name object exists in response\"] =(typeof(json.name) !== \"undefined\");\n   tests[\"model_input object exists in response\"] = (typeof(json.model_input) !== \"undefined\");\n   tests[\"upload object exists in response\"] =(typeof(json.upload) !== \"undefined\");\n   tests[request.data.upload[0].name + \" uploaded to \" + environment.S3] = json.upload === expected_upload_url;\n   //Put name and id fields in the environment variables\n   postman.setEnvironmentVariable(\"loadlocal_filename\", json.name);\n   postman.setEnvironmentVariable(\"id\", json.id);\n   postman.setNextRequest(\"POST loadlocal WITH AN EXISTING NAME\");  \n   }\n}catch(e){\n   var errormessage = { 'method' : request.method, 'url' : request.url, 'error':e.message };\n   var temp = environment.error_collector? (postman.getEnvironmentVariable(\"error_collector\") + \" \" + \"|\" + \" \") : \"\";\n   postman.setEnvironmentVariable(\"error_collector\",temp + JSON.stringify(errormessage));\n   tests[\"Unexpected Error Occurred - \"+ e.message] = true === false;\n   postman.setNextRequest(null);\n}\n\n\n\n"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"type": "text/javascript",
+								"exec": "//Clear the previous values * id * loadlocal_filename\n\nvar loadlocal_filename_available = environment.loadlocal_filename? true : false;\nconsole.log(loadlocal_filename_available);\nif(loadlocal_filename_available){\n    postman.clearEnvironmentVariable('loadlocal_filename');\n}\n\nvar id_available = environment.id? true : false;\nconsole.log(id_available);\nif(id_available){\n    postman.clearEnvironmentVariable('id');\n}\n\n\n"
+							}
+						}
+					],
+					"request": {
+						"url": "{{URI}}/VET/loadlocal/",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"description": ""
+							},
+							{
+								"key": "X-CSRFToken",
+								"value": "yGXetadw771nTTkNkankd9OeNAlbDqwsXOCUWLT3W7LgmxeCnIbkkyrXAFvQq5Ab",
+								"description": ""
+							},
+							{
+								"key": "Authorization",
+								"value": "Basic c21hcnRlbmVyZ3lTdXBlcnVzZXI6c3VucG93ZXIx",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "upload",
+									"value": "USA_AL_Montgomery-Dannelly.Field.722260_TMY3_BASE.csv",
+									"type": "file",
+									"enabled": true
+								},
+								{
+									"key": "name",
+									"value": "postman_{{$timestamp}}",
+									"type": "text",
+									"enabled": true
+								}
+							]
+						},
+						"description": "This request is a POST request to /VET/loadlocal/ endpoint.\nHere upload field accepts multipart/form data\nOnly required field here is name."
+					},
+					"response": []
+				},
+				{
+					"name": "POST loadlocal WITH AN EXISTING NAME",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": "try{\n   //Assert the success code\n   tests[\"Status 400 - Bad Request\"] = responseCode.code === 400;\n   postman.setNextRequest(\"POST loadlocal WITH AN EMPTY UPLOAD\");  \n \n}catch(e){\n   var errormessage = { 'method' : request.method, 'url' : request.url, 'error':e.message };\n   var temp = environment.error_collector? (postman.getEnvironmentVariable(\"error_collector\") + \" \" + \"|\" + \" \") : \"\";\n   postman.setEnvironmentVariable(\"error_collector\",temp + JSON.stringify(errormessage));\n   tests[\"Unexpected Error Occurred - \"+ e.message] = true === false;\n   postman.setNextRequest(null);\n}\n\n\n\n"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"type": "text/javascript",
+								"exec": "\n\n"
+							}
+						}
+					],
+					"request": {
+						"url": "{{URI}}/VET/loadlocal/",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"description": ""
+							},
+							{
+								"key": "X-CSRFToken",
+								"value": "yGXetadw771nTTkNkankd9OeNAlbDqwsXOCUWLT3W7LgmxeCnIbkkyrXAFvQq5Ab",
+								"description": ""
+							},
+							{
+								"key": "Authorization",
+								"value": "Basic c21hcnRlbmVyZ3lTdXBlcnVzZXI6c3VucG93ZXIx",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "upload",
+									"value": "USA_AL_Montgomery-Dannelly.Field.722260_TMY3_BASE.csv",
+									"type": "file",
+									"enabled": true
+								},
+								{
+									"key": "name",
+									"value": "{{loadlocal_filename}}",
+									"type": "text",
+									"enabled": true
+								}
+							]
+						},
+						"description": "This request is a POST request to /VET/loadlocal/ endpoint.\nHere upload field accepts multipart/form data\nOnly required field here is name."
+					},
+					"response": []
+				},
+				{
+					"name": "POST loadlocal WITH AN EMPTY UPLOAD",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": "try{\n   //Assert the success code\n   tests[\"Status 400 - Bad Request\"] = responseCode.code === 400;\n   postman.setNextRequest(\"GET loadlocal\");\n}catch(e){\n   var errormessage = { 'method' : request.method, 'url' : request.url, 'error':e.message };\n   var temp = environment.error_collector? (postman.getEnvironmentVariable(\"error_collector\") + \" \" + \"|\" + \" \") : \"\";\n   postman.setEnvironmentVariable(\"error_collector\",temp + JSON.stringify(errormessage));\n   tests[\"Unexpected Error Occurred - \"+ e.message] = true === false;\n   postman.setNextRequest(null);\n}\n\n\n\n"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"type": "text/javascript",
+								"exec": "\n\n"
+							}
+						}
+					],
+					"request": {
+						"url": "{{URI}}/VET/loadlocal/",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"description": ""
+							},
+							{
+								"key": "X-CSRFToken",
+								"value": "yGXetadw771nTTkNkankd9OeNAlbDqwsXOCUWLT3W7LgmxeCnIbkkyrXAFvQq5Ab",
+								"description": ""
+							},
+							{
+								"key": "Authorization",
+								"value": "Basic c21hcnRlbmVyZ3lTdXBlcnVzZXI6c3VucG93ZXIx",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "upload",
+									"value": "",
+									"type": "file",
+									"enabled": true
+								},
+								{
+									"key": "name",
+									"value": "_postman_{{timestamp}}",
+									"type": "text",
+									"enabled": true
+								}
+							]
+						},
+						"description": "This request is a POST request to /VET/loadlocal/ endpoint.\nHere upload field accepts multipart/form data\nOnly required field here is name."
+					},
+					"response": []
+				},
+				{
+					"name": "GET loadlocal",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": "\n\n/********************************Helper functions******************************************/\nvar isEmpty = function(outPut){\n    return Object.keys(outPut).length===0;        \n}\n/*******************************End of Helper functions*************************************/\n\n\ntry{\n\n// Verify the response is 200 status ok\ntests[\"Status 200 OK\" + \" GET /VET/loadlocal\"] = responseCode.code === 200;\n\n//convert response to json object\nvar json = JSON.parse(responseBody);\n\n\nif(responseCode.code === 200){\n    \n//check if there is a next page. If yes, get the page number for the page and call the vet/loadlocal?page={{page_number}} \n    \n    if(json.next !== null){\n       \n        var next = json.next;\n        \n        try {\n                var startIndex = next.indexOf(\"page\");\n                var page_number = next.substring(startIndex + 5);\n                console.log(page_number);\n                postman.setEnvironmentVariable(\"page_number\", page_number);\n                postman.setNextRequest(\"GET loadlocal PER PAGE NUMBER\");   \n                \n        } catch (e) {\n                postman.setEnvironmentVariable(\"page_number\", 'na');\n                console.error(\"Malformed next page URL - \", e.message);\n                postman.setNextRequest(null);     \n        }\n        \n    }else{\n        postman.setEnvironmentVariable(\"page_number\", 'na');\n        postman.setNextRequest(null);      \n    }\n    \n//Verify that model_input collection is not empty\ntests[\"Collection Not Empty\" + \" GET /VET/loadlocal\"] = isEmpty(json) === false;\n    \n//Get id value for the first record in pv_configuration collection\n    \n    if(isEmpty(json)){\n       \n       console.log(\"Results array is empty.No records in /vet/loadlocal\");\n       postman.setEnvironmentVariable(\"id\", 'na');\n       \n    }else{\n        \n       //console.log(json.results[0].pv_configuration.id);\n       postman.setEnvironmentVariable(\"id\", json.results[0].id);\n       console.log(environment.id);\n       \n    }\n\n}\n\n} catch(e){\n    \n   var errormessage = { 'method' : request.method, 'url' : request.url, 'error':e.message };\n   var temp = environment.error_collector? (postman.getEnvironmentVariable(\"error_collector\") + \" \" + \"|\" + \" \") : \"\";\n   postman.setEnvironmentVariable(\"error_collector\",temp + JSON.stringify(errormessage));\n   tests[\"Unexpected Error Occurred - \"+ e.message] = true === false;\n}\n        \n  \n\n\n\n\n\n"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"type": "text/javascript",
+								"exec": "//Clear the previous values for id and page_number environment parameters\n\nvar page_number_available = environment.page_number? true : false;\nconsole.log(page_number_available);\nif(page_number_available){\n    postman.clearEnvironmentVariable('page_number');\n}\n\nvar id_available = environment.id? true : false;\nconsole.log(id_available);\nif(id_available){\n    postman.clearEnvironmentVariable('id');\n}\n\nvar error_collector_available = environment.error_collector? true : false;\nconsole.log(error_collector_available);\nif(error_collector_available){\n    postman.clearEnvironmentVariable('error_collector');\n}\n"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": {
+								"username": "smartenergySuperuser",
+								"password": "sunpower1",
+								"saveHelperData": true,
+								"showPassword": false
+							}
+						},
+						"url": "{{URI}}/VET/loadlocal/",
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"description": ""
+							},
+							{
+								"key": "X-CSRFToken",
+								"value": "yGXetadw771nTTkNkankd9OeNAlbDqwsXOCUWLT3W7LgmxeCnIbkkyrXAFvQq5Ab",
+								"description": ""
+							},
+							{
+								"key": "Authorization",
+								"value": "Basic c21hcnRlbmVyZ3lTdXBlcnVzZXI6c3VucG93ZXIx",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": []
+						},
+						"description": "Returns the collection of model_input objects."
+					},
+					"response": []
+				},
+				{
+					"name": "GET loadlocal PER PAGE NUMBER",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": "try{\n    \nvar page_number = environment.page_number;\n\ntests[\"Status 200 OK\" +  \" = GET /VET/loadlocal?page=\" + page_number ] = responseCode.code === 200;\n\nvar json = JSON.parse(responseBody);\n\n if(responseCode.code === 200){\n    \n//check if there is a next page. If yes, get the page number for the page and call the vet/loadlocal?page={{page_number}} api\n    \n    if(json.next !== null){\n       \n        var next = json.next;\n        \n        try {\n                var startIndex = next.indexOf(\"page\");\n                var page_number = next.substring(startIndex + 5);\n                console.log(page_number);\n                postman.setEnvironmentVariable(\"page_number\", page_number);\n                postman.setNextRequest(\"GET loadlocal PER PAGE NUMBER\");   \n                \n        } catch (e) {\n                \n                console.error(\"Malformed next page URL - \", e.message);\n                postman.setNextRequest(null);  \n        }\n        \n    }\n    \n     postman.setNextRequest(\"GET loadlocal FOR VALID PAGE NUMBER\");   \n        \n  }\n  \n\n} catch(e){\n    \n   var errormessage = { 'method' : request.method, 'url' : request.url, 'error':e.message };\n   var temp = environment.error_collector? (postman.getEnvironmentVariable(\"error_collector\") + \" \" + \"|\" + \" \") : \"\";\n   postman.setEnvironmentVariable(\"error_collector\",temp + JSON.stringify(errormessage));\n   tests[\"Unexpected Error Occurred - \"+ e.message] = true === false;\n   \n}\n        \n  "
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"type": "text/javascript",
+								"exec": "//Set default page number to 1 in case the page number is na\nvar page_number = environment.page_number;\n\nif(page_number==='na'){\n   postman.setEnvironmentVariable(\"page_number\", 1);\n}\n\n"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": {
+								"username": "smartenergySuperuser",
+								"password": "sunpower1",
+								"saveHelperData": true,
+								"showPassword": false
+							}
+						},
+						"url": "{{URI}}/VET/loadlocal?page={{page_number}}",
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"description": ""
+							},
+							{
+								"key": "X-CSRFToken",
+								"value": "yGXetadw771nTTkNkankd9OeNAlbDqwsXOCUWLT3W7LgmxeCnIbkkyrXAFvQq5Ab",
+								"description": ""
+							},
+							{
+								"key": "Authorization",
+								"value": "Basic c21hcnRlbmVyZ3lTdXBlcnVzZXI6c3VucG93ZXIx",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": []
+						},
+						"description": "Returns the model_input object collection for specific page"
+					},
+					"response": []
+				},
+				{
+					"name": "GET loadlocal FOR VALID PAGE NUMBER",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": "try{\n   tests[\"Status 200 OK - Get Valid Page /VET/loadlocal?page=\" + environment.page_number ] = responseCode.code === 200;\n   postman.setNextRequest(\"GET loadlocal FOR INVALID PAGE NUMBER\");   \n} catch(e){\n   var errormessage = { 'method' : request.method, 'url' : request.url, 'error':e.message };\n   var temp = environment.error_collector? (postman.getEnvironmentVariable(\"error_collector\") + \" \" + \"|\" + \" \") : \"\";\n   postman.setEnvironmentVariable(\"error_collector\",temp + JSON.stringify(errormessage));\n   tests[\"Unexpected Error Occurred - \"+ e.message] = true === false;\n}\n"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"type": "text/javascript",
+								"exec": "//Set default page number to 1 in case the page number is na\nvar page_number = postman.getEnvironmentVariable(\"page_number\");\n\nif(page_number ==='na'){\n    \n  postman.setEnvironmentVariable(\"page_number\", 1);\n    \n}\n\n"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": {
+								"username": "smartenergySuperuser",
+								"password": "sunpower1",
+								"saveHelperData": true,
+								"showPassword": false
+							}
+						},
+						"url": "{{URI}}/VET/loadlocal?page={{page_number}}",
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"description": ""
+							},
+							{
+								"key": "X-CSRFToken",
+								"value": "yGXetadw771nTTkNkankd9OeNAlbDqwsXOCUWLT3W7LgmxeCnIbkkyrXAFvQq5Ab",
+								"description": ""
+							},
+							{
+								"key": "Authorization",
+								"value": "Basic c21hcnRlbmVyZ3lTdXBlcnVzZXI6c3VucG93ZXIx",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": []
+						},
+						"description": "Return model_input object collection for a valid page."
+					},
+					"response": []
+				},
+				{
+					"name": "GET loadlocal FOR INVALID PAGE NUMBER",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": "try{\n   tests[\"Status 404 Not Found - Get Invalid Page /VET/loadlocal?page=A1\"] = responseCode.code === 404;\n   postman.setNextRequest(\"GET loadlocal FOR VALID ID\");  \n} catch(e){\n   var errormessage = { 'method' : request.method, 'url' : request.url, 'error':e.message };\n   var temp = environment.error_collector? (postman.getEnvironmentVariable(\"error_collector\") + \" \" + \"|\" + \" \") : \"\";\n   postman.setEnvironmentVariable(\"error_collector\",temp + JSON.stringify(errormessage));\n   tests[\"Unexpected Error Occurred - \"+ e.message] = true === false;\n}\n"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": {
+								"username": "smartenergySuperuser",
+								"password": "sunpower1",
+								"saveHelperData": true,
+								"showPassword": false
+							}
+						},
+						"url": "{{URI}}/VET/loadlocal?page=A1",
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"description": ""
+							},
+							{
+								"key": "X-CSRFToken",
+								"value": "yGXetadw771nTTkNkankd9OeNAlbDqwsXOCUWLT3W7LgmxeCnIbkkyrXAFvQq5Ab",
+								"description": ""
+							},
+							{
+								"key": "Authorization",
+								"value": "Basic c21hcnRlbmVyZ3lTdXBlcnVzZXI6c3VucG93ZXIx",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": []
+						},
+						"description": "Returns 404 not found response for invalid page"
+					},
+					"response": []
+				},
+				{
+					"name": "GET loadlocal FOR VALID ID",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": "try{\n\nvar id = environment.id;\n\nif(_.isEqual(id,'na')){\n    \n    tests['Status 404 Not Found - GET /vet/loadlocal/'  + id ] = responseCode.code === 404;   \n    postman.setNextRequest(null);\n   \n} else {\n    \n    tests['Status 200 OK - GET /vet/loadlocal/'  + id ] = responseCode.code === 200;   \n    postman.setNextRequest(\"GET loadlocal FOR INVALID  ID\");\n    \n    \n}\n    \n}catch(e){\n   var errormessage = { 'method' : request.method, 'url' : request.url, 'error':e.message };\n   var temp = environment.error_collector? (postman.getEnvironmentVariable(\"error_collector\") + \" \" + \"|\" + \" \") : \"\";\n   postman.setEnvironmentVariable(\"error_collector\",temp + JSON.stringify(errormessage));\n   tests[\"Unexpected Error Occurred - \"+ e.message] = true === false;\n}\n\n"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"type": "text/javascript",
+								"exec": "//Verify if id is availble as an environment variable. If not, provide a default value to it\nconsole.log(_.has(environment,\"id\"));\n//console.log(_.some(environment, function() { return _.has(environment, \"id\"); }));\n\nif (_.has(environment,\"id\")){\n    console.log(environment.id);\n}else{\n    postman.setEnvironmentVariable(\"id\", 1);\n}\n"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": {
+								"username": "smartenergySuperuser",
+								"password": "sunpower1",
+								"saveHelperData": true,
+								"showPassword": false
+							}
+						},
+						"url": "{{URI}}/VET/loadlocal/{{id}}",
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"description": ""
+							},
+							{
+								"key": "X-CSRFToken",
+								"value": "yGXetadw771nTTkNkankd9OeNAlbDqwsXOCUWLT3W7LgmxeCnIbkkyrXAFvQq5Ab",
+								"description": ""
+							},
+							{
+								"key": "Authorization",
+								"value": "Basic c21hcnRlbmVyZ3lTdXBlcnVzZXI6c3VucG93ZXIx",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": []
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "GET loadlocal FOR INVALID  ID",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": "try{\n    tests[\"Status 404 Not Found - GET Invalid id /vet/loadlocal/A1\"] = responseCode.code === 404 ;\n    postman.setNextRequest(\"DELETE loadlocal WITH VALID EXISTANT ID\");\n} catch(e){\n    \n   var errormessage = { 'method' : request.method, 'url' : request.url, 'error':e.message };\n   var temp = environment.error_collector? (postman.getEnvironmentVariable(\"error_collector\") + \" \" + \"|\" + \" \") : \"\";\n   postman.setEnvironmentVariable(\"error_collector\",temp + JSON.stringify(errormessage));\n   tests[\"Unexpected Error Occurred - \"+ e.message] = true === false;\n}"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": {
+								"username": "smartenergySuperuser",
+								"password": "sunpower1",
+								"saveHelperData": true,
+								"showPassword": false
+							}
+						},
+						"url": "{{URI}}/VET/loadlocal/A1",
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"description": ""
+							},
+							{
+								"key": "X-CSRFToken",
+								"value": "yGXetadw771nTTkNkankd9OeNAlbDqwsXOCUWLT3W7LgmxeCnIbkkyrXAFvQq5Ab",
+								"description": ""
+							},
+							{
+								"key": "Authorization",
+								"value": "Basic c21hcnRlbmVyZ3lTdXBlcnVzZXI6c3VucG93ZXIx",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": []
+						},
+						"description": "Returns 404 page not found error as invalid object does not exists."
+					},
+					"response": []
+				},
+				{
+					"name": "DELETE loadlocal WITH VALID EXISTANT ID",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": "try{\n   tests[\"loadlocal with id \" + environment.id + \" deleted successfully\"] = (responseCode.code === 204 || responseCode.code === 200);\n   postman.setNextRequest(\"GET loadlocal FOR VALID NON EXISTENT ID\");\n}catch(e){\n   var errormessage = { 'method' : request.method, 'url' : request.url, 'error':e.message };\n   var temp = environment.error_collector? (postman.getEnvironmentVariable(\"error_collector\") + \" \" + \"|\" + \" \") : \"\";\n   postman.setEnvironmentVariable(\"error_collector\",temp + JSON.stringify(errormessage));\n   tests[\"Unexpected Error Occurred - \"+ e.message] = true === false;\n   postman.setNextRequest(null);\n}\n"
+							}
+						}
+					],
+					"request": {
+						"url": "{{URI}}/VET/loadlocal/{{id}}",
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"description": ""
+							},
+							{
+								"key": "X-CSRFToken",
+								"value": "yGXetadw771nTTkNkankd9OeNAlbDqwsXOCUWLT3W7LgmxeCnIbkkyrXAFvQq5Ab",
+								"description": ""
+							},
+							{
+								"key": "Authorization",
+								"value": "Basic c21hcnRlbmVyZ3lTdXBlcnVzZXI6c3VucG93ZXIx",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": []
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "GET loadlocal FOR VALID NON EXISTENT ID",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": "try{\n    tests[\"Status 404 Not Found - GET /VET/loadlocal/\"+ environment.id] = responseCode.code === 404 ;\n    postman.setNextRequest(\"DELETE loadlocal WITH VALID NON EXISTANT ID\");\n} catch(e){\n    \n   var errormessage = { 'method' : request.method, 'url' : request.url, 'error':e.message };\n   var temp = environment.error_collector? (postman.getEnvironmentVariable(\"error_collector\") + \" \" + \"|\" + \" \") : \"\";\n   postman.setEnvironmentVariable(\"error_collector\",temp + JSON.stringify(errormessage));\n   tests[\"Unexpected Error Occurred - \"+ e.message] = true === false;\n   postman.setNextRequest(null);\n}"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": {
+								"username": "smartenergySuperuser",
+								"password": "sunpower1",
+								"saveHelperData": true,
+								"showPassword": false
+							}
+						},
+						"url": "{{URI}}/VET/loadlocal/{{id}}",
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"description": ""
+							},
+							{
+								"key": "X-CSRFToken",
+								"value": "yGXetadw771nTTkNkankd9OeNAlbDqwsXOCUWLT3W7LgmxeCnIbkkyrXAFvQq5Ab",
+								"description": ""
+							},
+							{
+								"key": "Authorization",
+								"value": "Basic c21hcnRlbmVyZ3lTdXBlcnVzZXI6c3VucG93ZXIx",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": []
+						},
+						"description": "Returns 404 page not found error as the input is valid but not in existence anymore."
+					},
+					"response": []
+				},
+				{
+					"name": "DELETE loadlocal WITH VALID NON EXISTANT ID",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": "try{\n   tests[\"loadlocal with id \" + environment.id + \" should not exist as it is already deleted\"] = (responseCode.code === 404) ;\n   //postman.setNextRequest(\"POST /VET/QuoteEng FOR EMPTY LOADLOCAL\");\n}catch(e){\n   var errormessage = { 'method' : request.method, 'url' : request.url, 'error':e.message };\n   var temp = environment.error_collector? (postman.getEnvironmentVariable(\"error_collector\") + \" \" + \"|\" + \" \") : \"\";\n   postman.setEnvironmentVariable(\"error_collector\",temp + JSON.stringify(errormessage));\n   tests[\"Unexpected Error Occurred - \"+ e.message] = true === false;\n   postman.setNextRequest(null);\n}\n"
+							}
+						}
+					],
+					"request": {
+						"url": "{{URI}}/VET/loadlocal/{{id}}",
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"description": ""
+							},
+							{
+								"key": "X-CSRFToken",
+								"value": "yGXetadw771nTTkNkankd9OeNAlbDqwsXOCUWLT3W7LgmxeCnIbkkyrXAFvQq5Ab",
+								"description": ""
+							},
+							{
+								"key": "Authorization",
+								"value": "Basic c21hcnRlbmVyZ3lTdXBlcnVzZXI6c3VucG93ZXIx",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": []
+						},
+						"description": ""
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Run /VET/QuoteEng using loadlocal without model_input",
 			"description": "",
 			"item": [
 				{
@@ -18,7 +643,7 @@
 							"listen": "test",
 							"script": {
 								"type": "text/javascript",
-								"exec": "try{\n   //Assert the success code\n   tests[\"Status 201 - Resource Created\"] = responseCode.code === 201;\n   \n   if( responseCode.code === 201){\n   var json = JSON.parse(responseBody);\n   //Assert imports_after and imports_before has 8760 elements\n   tests[\"id object exists in response\"] = (typeof(json.id) !== \"undefined\");\n   tests[\"name object exists in response\"] =(typeof(json.name) !== \"undefined\");\n   tests[\"model_input object exists in response\"] = (typeof(json.model_input) !== \"undefined\");\n   tests[\"upload object exists in response\"] =(typeof(json.upload) !== \"undefined\");\n   //Put name and id fields in the environment variables\n   postman.setEnvironmentVariable(\"loadlocal_filename\", json.name);\n   postman.setEnvironmentVariable(\"id\", json.id);\n   postman.setNextRequest(\"RUN /VET/QuoteEng SCENARIO\");\n   }\n}catch(e){\n   var errormessage = { 'method' : request.method, 'url' : request.url, 'error':e.message };\n   var temp = environment.error_collector? (postman.getEnvironmentVariable(\"error_collector\") + \" \" + \"|\" + \" \") : \"\";\n   postman.setEnvironmentVariable(\"error_collector\",temp + JSON.stringify(errormessage));\n   tests[\"Unexpected Error Occurred - \"+ e.message] = true === false;\n   postman.setNextRequest(null);\n}\n\n\n\n"
+								"exec": "var expected_upload_url = environment.S3 + request.data.upload[0].name;\ntry{\n   //Assert the success code\n   tests[\"Status 201 - Resource Created\"] = responseCode.code === 201;\n   \n   if( responseCode.code === 201){\n   var json = JSON.parse(responseBody);\n   //Assert imports_after and imports_before has 8760 elements\n   tests[\"id object exists in response\"] = (typeof(json.id) !== \"undefined\");\n   tests[\"name object exists in response\"] =(typeof(json.name) !== \"undefined\");\n   tests[\"model_input object exists in response\"] = (typeof(json.model_input) !== \"undefined\");\n   tests[\"upload object exists in response\"] =(typeof(json.upload) !== \"undefined\");\n   tests[request.data.upload[0].name + \" uploaded to \" + environment.S3] = json.upload === expected_upload_url;\n   //Put name and id fields in the environment variables\n   postman.setEnvironmentVariable(\"loadlocal_filename\", json.name);\n   postman.setEnvironmentVariable(\"id\", json.id);\n   postman.setNextRequest(\"RUN /VET/QuoteEng SCENARIO\");\n   }\n}catch(e){\n   var errormessage = { 'method' : request.method, 'url' : request.url, 'error':e.message };\n   var temp = environment.error_collector? (postman.getEnvironmentVariable(\"error_collector\") + \" \" + \"|\" + \" \") : \"\";\n   postman.setEnvironmentVariable(\"error_collector\",temp + JSON.stringify(errormessage));\n   tests[\"Unexpected Error Occurred - \"+ e.message] = true === false;\n   postman.setNextRequest(null);\n}\n\n\n\n"
 							}
 						},
 						{
@@ -54,7 +679,7 @@
 							"formdata": [
 								{
 									"key": "upload",
-									"src": "/loadlocal_files/USA_AL_Montgomery-Dannelly.Field.722260_TMY3_BASE.csv",
+									"value": "USA_AL_Montgomery-Dannelly.Field.722260_TMY3_BASE.csv",
 									"type": "file",
 									"enabled": true
 								},
@@ -282,572 +907,6 @@
 							"raw": "{\n        \"pv_configuration\":{\n            \"Shortname\":\"{{$timestamp}}_pvconfiguration_shortname\",\n            \"Street_And_Number\": \"50 Cape Cod\",\n            \"City\": \"Irvine\",\n            \"State\": \"CA\",\n            \"Country\" :\"US\",  \n            \"Zipcode\": 92620,\n            \"SystemAzimuth\": 0.0,\n            \"MountingSurfaceSlope\": 18.4,\n            \"PVModuleId\": 654, \n            \"MountingSystemId\": 22,    \n            \"StandardInverterId\": 1043, \n            \"InverterCount\": 40,\n            \"ParallelStringCount\": 40,\n            \"MonthlyShading\": [\n                0,\n                0,\n                0,\n                0,\n                0,\n                0,\n                0,\n                0,\n                0,\n                0,\n                0,\n                0\n            ]},         \n        \"tariffengine_input\": {\n            \"new_account\": false,\n            \"provider_account_id\": \"provider_account_id0\",\n            \"tariff_input_name\": \"tariff_input_name\",\n            \"account_name\": \"vet_demo_account\",\n            \"lse_id\": 100747,\n            \"master_tariff_id\": \"3250717\",\n            \"before_solar_tariff_id\": \"3250717\",\n            \"after_solar_tariff_id\": \"3250717\",\n            \"rate_inflation_before_tariff\": \"1.5\",\n            \"rate_inflation_after_tariff\": \"1.5\",\n            \"rate_inflation_solar\": \"1.25\",\n            \"solar_degradation\": \"1.5\",\n            \"solar_price\": 50,\n            \"monthly_consumption_from_user\": [2000,2100,2000,2100,2000,2100,2000,2100,2000,2100,2000,2100],\n            \"address_string\": \"20480 Chapel Drive, Monte Rio 95462\",\n            \"solar_profile_id\": \"solar_profile_id34\",\n            \"system_size\": 3,\n            \"load_profile_id\": \"load_profile_id34\",\n            \"customer_class_value\": \"1\"\n            },\n        \"fineng_input\": {\n            \"quote_id\":123456,\n            \"time_stamp\":\"2015-09-27T00:00:00.000-0500\",\n            \"business_sector\":\"Residential\",\n            \"channel\":\"Indirect\",\n            \"financing_option\":\"lease\",\n            \"state_abbrev\":\"CA\",\n            \"utility\":\"PGE\",\n            \"utility_id\":\"CA_II\",\n            \"dealer\":\"Any Dealer\",\n            \"dealer_id\":\"0018000000prb4aAAA\",\n            \"dealer_oracle_id\":45678,\n            \"system_size\":5.0,\n            \"year_1_production\":5400,\n            \"system_price\":60000.0,\n            \"pricing_cost\":24474.3,\n            \"dealer_fee\":12750,\n            \"state_rebate\":0.0,\n            \"down_payment\":0.0,\n            \"escalator_rate\":0.0,\n            \"state_incentive\":[0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1],\n            \"inverter_name\":[\"SMA sunny Boy\",\"another\"],\n            \"inverter_id\":[5678,567999],\n            \"inverter_quantity\":[3,1],\n            \"panel_type\":\"dc\",\n            \"pv_model\":\"327W WHT\",\n            \"pv_model_name\":\"327 WHT\",\n            \"number_of_modules\":12,\n            \"nem2_identifier\":0,\n            \"monthly_bill_before\":100.7,\n            \"monthly_bill_after\":50.8\n            },\n         \"model_input_shortname\": \"{{$timestamp}}_model_input_shortname\",\n         \"adjusted_load\": 12000.0,\n         \"adjusted_yield\": 1700.0,\n         \"annual_battery_degrad_rate\": 0.02,\n         \"arrive_time_in_hours_from_noon\": 6.0,\n         \"baseline_end_time_in_hours_from_noon\": 9.0,\n         \"battery_energy_capacity\": 30.0,\n         \"battery_max_power\": 3.0,\n         \"battery_to_load_efficiency\": 0.95,\n         \"degradation_factor\": 0.0025,\n         \"degradation_model\": \"full\",\n         \"dep_time_in_hours_from_noon\": 20.0,\n         \"discharge_end_time\": 23.0,\n         \"discharge_start_time\": 19.0,\n         \"electric_water_heating\": \"No\",\n         \"ev_battery_capacity\": 30.0,\n         \"ev_charging_power\": 6.0,\n         \"gas_to_hp_conversion_factor\": 0.25,\n         \"grid_to_battery_efficiency\": 0.95,\n         \"max_wh_load\": 0.0,\n         \"no_pv_tariff_filename\": \"PG-and-E-E-1.xlsx\",\n         \"optimization_objective\": \"Time of use\",\n         \"pp_baseline_end_time_in_hours\": 18.0,\n         \"pp_baseline_start_time_in_hours\": 12.0,\n         \"pp_power\": 1.4,\n         \"pv_filename\": \"PVSim Results - Stockton_AC - 2015.9.21.xlsx\",\n         \"pv_only_tariff_filename\": \"PG-and-E TOU-B-Month-Netting.xlsx\", \n         \"pv_plus_em_tariff_filename\": \"PG-and-E TOU-B.xlsx\",\n         \"pv_systemsize\": 2015,\n         \"pv_systemsize_base\": 6.25,\n         \"pv_to_battery_efficiency\": 0.9014,\n         \"water_heater\": \"Default\",\n         \"yield_value\": 1756.68,\n         \"loadlocal\":\"{{loadlocal_filename}}\"\n}"
 						},
 						"description": "Generated from a curl request: \ncurl -X POST -H \\\"Accept: application/json\\\" -H \\\"X-CSRFToken: yGXetadw771nTTkNkankd9OeNAlbDqwsXOCUWLT3W7LgmxeCnIbkkyrXAFvQq5Ab\\\" -H \\\"Authorization: Basic c21hcnRlbmVyZ3lTdXBlcnVzZXI6c3VucG93ZXIx\\\" -H \\\"Content-Type: application/json\\\" -H \\\"Cache-Control: no-cache\\\" -H \\\"Postman-Token: 03a96f52-d6a9-daf4-7882-8b3ad21bc2a0\\\" -d '{\n        \\\"pv_configuration\\\":{\n            \\\"Shortname\\\":\\\"Sept29loadlocal 1\\\",\n            \\\"Street_And_Number\\\": \\\"50 Cape Cod\\\",\n            \\\"City\\\": \\\"Irvine\\\",\n            \\\"State\\\": \\\"CA\\\",\n            \\\"Country\\\" :\\\"US\\\",  \n            \\\"Zipcode\\\": 92620,\n            \\\"SystemAzimuth\\\": 0.0,\n            \\\"MountingSurfaceSlope\\\": 18.4,\n            \\\"PVModuleId\\\": 654, \n            \\\"MountingSystemId\\\": 22,    \n            \\\"StandardInverterId\\\": 1043, \n            \\\"InverterCount\\\": 40,\n            \\\"ParallelStringCount\\\": 40,\n            \\\"MonthlyShading\\\": [\n                0,\n                0,\n                0,\n                0,\n                0,\n                0,\n                0,\n                0,\n                0,\n                0,\n                0,\n                0\n            ]},         \n        \\\"tariffengine_input\\\": {\n            \\\"new_account\\\": false,\n            \\\"provider_account_id\\\": \\\"provider_account_id0\\\",\n            \\\"tariff_input_name\\\": \\\"tariff_input_name\\\",\n            \\\"account_name\\\": \\\"vet_demo_account\\\",\n            \\\"lse_id\\\": 100747,\n            \\\"master_tariff_id\\\": \\\"3250717\\\",\n            \\\"before_solar_tariff_id\\\": \\\"3250717\\\",\n            \\\"after_solar_tariff_id\\\": \\\"3250717\\\",\n            \\\"rate_inflation_before_tariff\\\": \\\"1.5\\\",\n            \\\"rate_inflation_after_tariff\\\": \\\"1.5\\\",\n            \\\"rate_inflation_solar\\\": \\\"1.25\\\",\n            \\\"solar_degradation\\\": \\\"1.5\\\",\n            \\\"solar_price\\\": 50,\n            \\\"monthly_consumption_from_user\\\": [2000,2100,2000,2100,2000,2100,2000,2100,2000,2100,2000,2100],\n            \\\"address_string\\\": \\\"20480 Chapel Drive, Monte Rio 95462\\\",\n            \\\"solar_profile_id\\\": \\\"solar_profile_id34\\\",\n            \\\"system_size\\\": 3,\n            \\\"load_profile_id\\\": \\\"load_profile_id34\\\",\n            \\\"customer_class_value\\\": \\\"1\\\"\n            },\n        \\\"fineng_input\\\": {\n            \\\"quote_id\\\":123456,\n            \\\"time_stamp\\\":\\\"2015-09-27T00:00:00.000-0500\\\",\n            \\\"business_sector\\\":\\\"Residential\\\",\n            \\\"channel\\\":\\\"Indirect\\\",\n            \\\"financing_option\\\":\\\"lease\\\",\n            \\\"state_abbrev\\\":\\\"CA\\\",\n            \\\"utility\\\":\\\"PGE\\\",\n            \\\"utility_id\\\":\\\"CA_II\\\",\n            \\\"dealer\\\":\\\"Any Dealer\\\",\n            \\\"dealer_id\\\":\\\"0018000000prb4aAAA\\\",\n            \\\"dealer_oracle_id\\\":45678,\n            \\\"system_size\\\":5.0,\n            \\\"year_1_production\\\":5400,\n            \\\"system_price\\\":60000.0,\n            \\\"pricing_cost\\\":24474.3,\n            \\\"dealer_fee\\\":12750,\n            \\\"state_rebate\\\":0.0,\n            \\\"down_payment\\\":0.0,\n            \\\"escalator_rate\\\":0.0,\n            \\\"state_incentive\\\":[0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1],\n            \\\"inverter_name\\\":[\\\"SMA sunny Boy\\\",\\\"another\\\"],\n            \\\"inverter_id\\\":[5678,567999],\n            \\\"inverter_quantity\\\":[3,1],\n            \\\"panel_type\\\":\\\"dc\\\",\n            \\\"pv_model\\\":\\\"327W WHT\\\",\n            \\\"pv_model_name\\\":\\\"327 WHT\\\",\n            \\\"number_of_modules\\\":12,\n            \\\"nem2_identifier\\\":0,\n            \\\"monthly_bill_before\\\":100.7,\n            \\\"monthly_bill_after\\\":50.8\n            },\n         \\\"model_input_shortname\\\": \\\"Sept29 modelinput 1\\\",\n         \\\"adjusted_load\\\": 12000.0,\n         \\\"adjusted_yield\\\": 1700.0,\n         \\\"annual_battery_degrad_rate\\\": 0.02,\n         \\\"arrive_time_in_hours_from_noon\\\": 6.0,\n         \\\"baseline_end_time_in_hours_from_noon\\\": 9.0,\n         \\\"battery_energy_capacity\\\": 30.0,\n         \\\"battery_max_power\\\": 3.0,\n         \\\"battery_to_load_efficiency\\\": 0.95,\n         \\\"degradation_factor\\\": 0.0025,\n         \\\"degradation_model\\\": \\\"full\\\",\n         \\\"dep_time_in_hours_from_noon\\\": 20.0,\n         \\\"discharge_end_time\\\": 23.0,\n         \\\"discharge_start_time\\\": 19.0,\n         \\\"electric_water_heating\\\": \\\"No\\\",\n         \\\"ev_battery_capacity\\\": 30.0,\n         \\\"ev_charging_power\\\": 6.0,\n         \\\"gas_to_hp_conversion_factor\\\": 0.25,\n         \\\"grid_to_battery_efficiency\\\": 0.95,\n         \\\"load_filename\\\": \\\"USA_CA_Sacramento.Metro.AP.724839_TMY3_LOW.csv\\\",\n         \\\"max_wh_load\\\": 0.0,\n         \\\"no_pv_tariff_filename\\\": \\\"PG-and-E-E-1.xlsx\\\",\n         \\\"optimization_objective\\\": \\\"Time of use\\\",\n         \\\"pp_baseline_end_time_in_hours\\\": 18.0,\n         \\\"pp_baseline_start_time_in_hours\\\": 12.0,\n         \\\"pp_power\\\": 1.4,\n         \\\"pv_filename\\\": \\\"PVSim Results - Stockton_AC - 2015.9.21.xlsx\\\",\n         \\\"pv_only_tariff_filename\\\": \\\"PG-and-E TOU-B-Month-Netting.xlsx\\\", \n         \\\"pv_plus_em_tariff_filename\\\": \\\"PG-and-E TOU-B.xlsx\\\",\n         \\\"pv_systemsize\\\": 2015,\n         \\\"pv_systemsize_base\\\": 6.25,\n         \\\"pv_to_battery_efficiency\\\": 0.9014,\n         \\\"water_heater\\\": \\\"Default\\\",\n         \\\"yield_value\\\": 1756.68,\n         \\\"loadlocal\\\": {\\\"name\\\":\\\"EOS550\\\"}\n}' http://dev-vetaws01.sunpowercorp.com/VET/QuoteEng/\n"
-					},
-					"response": []
-				}
-			]
-		},
-		{
-			"name": "CRUD /VET/loadlocal",
-			"description": "",
-			"item": [
-				{
-					"name": "GET loadlocal",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"type": "text/javascript",
-								"exec": "\n\n/********************************Helper functions******************************************/\nvar isEmpty = function(outPut){\n    return Object.keys(outPut).length===0;        \n}\n/*******************************End of Helper functions*************************************/\n\n\ntry{\n\n// Verify the response is 200 status ok\ntests[\"Status 200 OK\" + \" GET /VET/loadlocal\"] = responseCode.code === 200;\n\n//convert response to json object\nvar json = JSON.parse(responseBody);\n\n\nif(responseCode.code === 200){\n    \n//check if there is a next page. If yes, get the page number for the page and call the vet/loadlocal?page={{page_number}} \n    \n    if(json.next !== null){\n       \n        var next = json.next;\n        \n        try {\n                var startIndex = next.indexOf(\"page\");\n                var page_number = next.substring(startIndex + 5);\n                console.log(page_number);\n                postman.setEnvironmentVariable(\"page_number\", page_number);\n                postman.setNextRequest(\"GET loadlocal PER PAGE NUMBER\");   \n                \n        } catch (e) {\n                postman.setEnvironmentVariable(\"page_number\", 'na');\n                console.error(\"Malformed next page URL - \", e.message);\n                postman.setNextRequest(null);     \n        }\n        \n    }else{\n        \n         postman.setNextRequest(null);      \n    }\n    \n//Verify that model_input collection is not empty\ntests[\"Collection Not Empty\" + \" GET /VET/loadlocal\"] = isEmpty(json) === false;\n    \n//Get id value for the first record in pv_configuration collection\n    \n    if(isEmpty(json)){\n       \n       console.log(\"Results array is empty.No records in /vet/loadlocal\");\n       postman.setEnvironmentVariable(\"id\", 'na');\n       \n    }else{\n        \n       //console.log(json.results[0].pv_configuration.id);\n       postman.setEnvironmentVariable(\"id\", json.results[0].id);\n       console.log(environment.id);\n       \n    }\n\n}\n\n} catch(e){\n    \n   var errormessage = { 'method' : request.method, 'url' : request.url, 'error':e.message };\n   var temp = environment.error_collector? (postman.getEnvironmentVariable(\"error_collector\") + \" \" + \"|\" + \" \") : \"\";\n   postman.setEnvironmentVariable(\"error_collector\",temp + JSON.stringify(errormessage));\n   tests[\"Unexpected Error Occurred - \"+ e.message] = true === false;\n}\n        \n  \n\n\n\n\n\n"
-							}
-						},
-						{
-							"listen": "prerequest",
-							"script": {
-								"type": "text/javascript",
-								"exec": "//Clear the previous values for id and page_number environment parameters\n\nvar page_number_available = environment.page_number? true : false;\nconsole.log(page_number_available);\nif(page_number_available){\n    postman.clearEnvironmentVariable('page_number');\n}\n\nvar id_available = environment.id? true : false;\nconsole.log(id_available);\nif(id_available){\n    postman.clearEnvironmentVariable('id');\n}\n\nvar error_collector_available = environment.error_collector? true : false;\nconsole.log(error_collector_available);\nif(error_collector_available){\n    postman.clearEnvironmentVariable('error_collector');\n}\n"
-							}
-						}
-					],
-					"request": {
-						"auth": {
-							"type": "basic",
-							"basic": {
-								"username": "smartenergySuperuser",
-								"password": "sunpower1",
-								"saveHelperData": true,
-								"showPassword": false
-							}
-						},
-						"url": "{{URI}}/VET/loadlocal/",
-						"method": "GET",
-						"header": [
-							{
-								"key": "Accept",
-								"value": "application/json",
-								"description": ""
-							},
-							{
-								"key": "X-CSRFToken",
-								"value": "yGXetadw771nTTkNkankd9OeNAlbDqwsXOCUWLT3W7LgmxeCnIbkkyrXAFvQq5Ab",
-								"description": ""
-							},
-							{
-								"key": "Authorization",
-								"value": "Basic c21hcnRlbmVyZ3lTdXBlcnVzZXI6c3VucG93ZXIx",
-								"description": ""
-							}
-						],
-						"body": {
-							"mode": "formdata",
-							"formdata": []
-						},
-						"description": "Returns the collection of model_input objects."
-					},
-					"response": []
-				},
-				{
-					"name": "GET loadlocal PER PAGE NUMBER",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"type": "text/javascript",
-								"exec": "try{\n    \nvar page_number = environment.page_number;\n\ntests[\"Status 200 OK\" +  \" = GET /VET/loadlocal?page=\" + page_number ] = responseCode.code === 200;\n\nvar json = JSON.parse(responseBody);\n\n if(responseCode.code === 200){\n    \n//check if there is a next page. If yes, get the page number for the page and call the vet/loadlocal?page={{page_number}} api\n    \n    if(json.next !== null){\n       \n        var next = json.next;\n        \n        try {\n                var startIndex = next.indexOf(\"page\");\n                var page_number = next.substring(startIndex + 5);\n                console.log(page_number);\n                postman.setEnvironmentVariable(\"page_number\", page_number);\n                postman.setNextRequest(\"GET loadlocal PER PAGE NUMBER\");   \n                \n        } catch (e) {\n                \n                console.error(\"Malformed next page URL - \", e.message);\n                postman.setNextRequest(null);  \n        }\n        \n    }\n    \n     postman.setNextRequest(\"GET loadlocal FOR VALID PAGE NUMBER\");   \n        \n  }\n  \n\n} catch(e){\n    \n   var errormessage = { 'method' : request.method, 'url' : request.url, 'error':e.message };\n   var temp = environment.error_collector? (postman.getEnvironmentVariable(\"error_collector\") + \" \" + \"|\" + \" \") : \"\";\n   postman.setEnvironmentVariable(\"error_collector\",temp + JSON.stringify(errormessage));\n   tests[\"Unexpected Error Occurred - \"+ e.message] = true === false;\n   \n}\n        \n  "
-							}
-						},
-						{
-							"listen": "prerequest",
-							"script": {
-								"type": "text/javascript",
-								"exec": "//Set default page number to 1 in case the page number is na\nvar page_number = environment.page_number;\n\nif(page_number==='na'){\n    \n    environment.page_number = 1;\n    \n}"
-							}
-						}
-					],
-					"request": {
-						"auth": {
-							"type": "basic",
-							"basic": {
-								"username": "smartenergySuperuser",
-								"password": "sunpower1",
-								"saveHelperData": true,
-								"showPassword": false
-							}
-						},
-						"url": "{{URI}}/VET/loadlocal?page={{page_number}}",
-						"method": "GET",
-						"header": [
-							{
-								"key": "Accept",
-								"value": "application/json",
-								"description": ""
-							},
-							{
-								"key": "X-CSRFToken",
-								"value": "yGXetadw771nTTkNkankd9OeNAlbDqwsXOCUWLT3W7LgmxeCnIbkkyrXAFvQq5Ab",
-								"description": ""
-							},
-							{
-								"key": "Authorization",
-								"value": "Basic c21hcnRlbmVyZ3lTdXBlcnVzZXI6c3VucG93ZXIx",
-								"description": ""
-							}
-						],
-						"body": {
-							"mode": "formdata",
-							"formdata": []
-						},
-						"description": "Returns the model_input object collection for specific page"
-					},
-					"response": []
-				},
-				{
-					"name": "GET loadlocal FOR VALID PAGE NUMBER",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"type": "text/javascript",
-								"exec": "try{\n   tests[\"Status 200 OK - Get Valid Page /VET/loadlocal?page=\" + environment.page_number ] = responseCode.code === 200;\n   postman.setNextRequest(\"GET loadlocal FOR INVALID PAGE NUMBER\");   \n} catch(e){\n   var errormessage = { 'method' : request.method, 'url' : request.url, 'error':e.message };\n   var temp = environment.error_collector? (postman.getEnvironmentVariable(\"error_collector\") + \" \" + \"|\" + \" \") : \"\";\n   postman.setEnvironmentVariable(\"error_collector\",temp + JSON.stringify(errormessage));\n   tests[\"Unexpected Error Occurred - \"+ e.message] = true === false;\n}\n"
-							}
-						},
-						{
-							"listen": "prerequest",
-							"script": {
-								"type": "text/javascript",
-								"exec": "//Set default page number to 1 in case the page number is na\nvar page_number = postman.getEnvironmentVariable(\"page_number\");\n\nif(page_number ==='na'){\n    \n  postman.setEnvironmentVariable(\"page_number\", 1);\n    \n}\n\n"
-							}
-						}
-					],
-					"request": {
-						"auth": {
-							"type": "basic",
-							"basic": {
-								"username": "smartenergySuperuser",
-								"password": "sunpower1",
-								"saveHelperData": true,
-								"showPassword": false
-							}
-						},
-						"url": "{{URI}}/VET/loadlocal?page={{page_number}}",
-						"method": "GET",
-						"header": [
-							{
-								"key": "Accept",
-								"value": "application/json",
-								"description": ""
-							},
-							{
-								"key": "X-CSRFToken",
-								"value": "yGXetadw771nTTkNkankd9OeNAlbDqwsXOCUWLT3W7LgmxeCnIbkkyrXAFvQq5Ab",
-								"description": ""
-							},
-							{
-								"key": "Authorization",
-								"value": "Basic c21hcnRlbmVyZ3lTdXBlcnVzZXI6c3VucG93ZXIx",
-								"description": ""
-							}
-						],
-						"body": {
-							"mode": "formdata",
-							"formdata": []
-						},
-						"description": "Return model_input object collection for a valid page."
-					},
-					"response": []
-				},
-				{
-					"name": "GET loadlocal FOR INVALID PAGE NUMBER",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"type": "text/javascript",
-								"exec": "try{\n   tests[\"Status 404 Not Found - Get Invalid Page /VET/loadlocal?page=A1\"] = responseCode.code === 404;\n   postman.setNextRequest(\"POST loadlocal WITH UNIQUE NAME\");  \n} catch(e){\n   var errormessage = { 'method' : request.method, 'url' : request.url, 'error':e.message };\n   var temp = environment.error_collector? (postman.getEnvironmentVariable(\"error_collector\") + \" \" + \"|\" + \" \") : \"\";\n   postman.setEnvironmentVariable(\"error_collector\",temp + JSON.stringify(errormessage));\n   tests[\"Unexpected Error Occurred - \"+ e.message] = true === false;\n}\n"
-							}
-						}
-					],
-					"request": {
-						"auth": {
-							"type": "basic",
-							"basic": {
-								"username": "smartenergySuperuser",
-								"password": "sunpower1",
-								"saveHelperData": true,
-								"showPassword": false
-							}
-						},
-						"url": "{{URI}}/VET/loadlocal?page=A1",
-						"method": "GET",
-						"header": [
-							{
-								"key": "Accept",
-								"value": "application/json",
-								"description": ""
-							},
-							{
-								"key": "X-CSRFToken",
-								"value": "yGXetadw771nTTkNkankd9OeNAlbDqwsXOCUWLT3W7LgmxeCnIbkkyrXAFvQq5Ab",
-								"description": ""
-							},
-							{
-								"key": "Authorization",
-								"value": "Basic c21hcnRlbmVyZ3lTdXBlcnVzZXI6c3VucG93ZXIx",
-								"description": ""
-							}
-						],
-						"body": {
-							"mode": "formdata",
-							"formdata": []
-						},
-						"description": "Returns 404 not found response for invalid page"
-					},
-					"response": []
-				},
-				{
-					"name": "POST loadlocal WITH UNIQUE NAME",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"type": "text/javascript",
-								"exec": "try{\n   //Assert the success code\n   tests[\"Status 201 - Resource Created\"] = responseCode.code === 201;\n   \n   if( responseCode.code === 201){\n   var json = JSON.parse(responseBody);\n   //Assert imports_after and imports_before has 8760 elements\n   tests[\"id object exists in response\"] = (typeof(json.id) !== \"undefined\");\n   tests[\"name object exists in response\"] =(typeof(json.name) !== \"undefined\");\n   tests[\"model_input object exists in response\"] = (typeof(json.model_input) !== \"undefined\");\n   tests[\"upload object exists in response\"] =(typeof(json.upload) !== \"undefined\");\n   //Put name and id fields in the environment variables\n   postman.setEnvironmentVariable(\"loadlocal_filename\", json.name);\n   postman.setEnvironmentVariable(\"id\", json.id);\n   postman.setNextRequest(\"POST loadlocal WITH AN EXISTING NAME\");  \n   }\n}catch(e){\n   var errormessage = { 'method' : request.method, 'url' : request.url, 'error':e.message };\n   var temp = environment.error_collector? (postman.getEnvironmentVariable(\"error_collector\") + \" \" + \"|\" + \" \") : \"\";\n   postman.setEnvironmentVariable(\"error_collector\",temp + JSON.stringify(errormessage));\n   tests[\"Unexpected Error Occurred - \"+ e.message] = true === false;\n   postman.setNextRequest(null);\n}\n\n\n\n"
-							}
-						},
-						{
-							"listen": "prerequest",
-							"script": {
-								"type": "text/javascript",
-								"exec": "//Clear the previous values * id * loadlocal_filename\n\nvar loadlocal_filename_available = environment.loadlocal_filename? true : false;\nconsole.log(loadlocal_filename_available);\nif(loadlocal_filename_available){\n    postman.clearEnvironmentVariable('loadlocal_filename');\n}\n\nvar id_available = environment.id? true : false;\nconsole.log(id_available);\nif(id_available){\n    postman.clearEnvironmentVariable('id');\n}\n\n\n"
-							}
-						}
-					],
-					"request": {
-						"url": "{{URI}}/VET/loadlocal/",
-						"method": "POST",
-						"header": [
-							{
-								"key": "Accept",
-								"value": "application/json",
-								"description": ""
-							},
-							{
-								"key": "X-CSRFToken",
-								"value": "yGXetadw771nTTkNkankd9OeNAlbDqwsXOCUWLT3W7LgmxeCnIbkkyrXAFvQq5Ab",
-								"description": ""
-							},
-							{
-								"key": "Authorization",
-								"value": "Basic c21hcnRlbmVyZ3lTdXBlcnVzZXI6c3VucG93ZXIx",
-								"description": ""
-							}
-						],
-						"body": {
-							"mode": "formdata",
-							"formdata": [
-								{
-									"key": "upload",
-									"src": "/loadlocal_files/USA_AL_Montgomery-Dannelly.Field.722260_TMY3_BASE.csv",
-									"type": "file",
-									"enabled": true
-								},
-								{
-									"key": "name",
-									"value": "postman_{{$timestamp}}",
-									"type": "text",
-									"enabled": true
-								}
-							]
-						},
-						"description": "This request is a POST request to /VET/loadlocal/ endpoint.\nHere upload field accepts multipart/form data\nOnly required field here is name."
-					},
-					"response": []
-				},
-				{
-					"name": "POST loadlocal WITH AN EXISTING NAME",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"type": "text/javascript",
-								"exec": "try{\n   //Assert the success code\n   tests[\"Status 400 - Bad Request\"] = responseCode.code === 400;\n   postman.setNextRequest(\"POST loadlocal WITH AN EMPTY UPLOAD\");  \n \n}catch(e){\n   var errormessage = { 'method' : request.method, 'url' : request.url, 'error':e.message };\n   var temp = environment.error_collector? (postman.getEnvironmentVariable(\"error_collector\") + \" \" + \"|\" + \" \") : \"\";\n   postman.setEnvironmentVariable(\"error_collector\",temp + JSON.stringify(errormessage));\n   tests[\"Unexpected Error Occurred - \"+ e.message] = true === false;\n   postman.setNextRequest(null);\n}\n\n\n\n"
-							}
-						},
-						{
-							"listen": "prerequest",
-							"script": {
-								"type": "text/javascript",
-								"exec": "\n\n"
-							}
-						}
-					],
-					"request": {
-						"url": "{{URI}}/VET/loadlocal/",
-						"method": "POST",
-						"header": [
-							{
-								"key": "Accept",
-								"value": "application/json",
-								"description": ""
-							},
-							{
-								"key": "X-CSRFToken",
-								"value": "yGXetadw771nTTkNkankd9OeNAlbDqwsXOCUWLT3W7LgmxeCnIbkkyrXAFvQq5Ab",
-								"description": ""
-							},
-							{
-								"key": "Authorization",
-								"value": "Basic c21hcnRlbmVyZ3lTdXBlcnVzZXI6c3VucG93ZXIx",
-								"description": ""
-							}
-						],
-						"body": {
-							"mode": "formdata",
-							"formdata": [
-								{
-									"key": "upload",
-									"src": "/loadlocal_files/USA_AL_Montgomery-Dannelly.Field.722260_TMY3_BASE.csv",
-									"type": "file",
-									"enabled": true
-								},
-								{
-									"key": "name",
-									"value": "EOS550",
-									"type": "text",
-									"enabled": true
-								}
-							]
-						},
-						"description": "This request is a POST request to /VET/loadlocal/ endpoint.\nHere upload field accepts multipart/form data\nOnly required field here is name."
-					},
-					"response": []
-				},
-				{
-					"name": "GET loadlocal FOR VALID ID",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"type": "text/javascript",
-								"exec": "try{\n\nvar id = environment.id;\n\nif(_.isEqual(id,'na')){\n    \n    tests['Status 404 Not Found - GET /vet/loadlocal/'  + id ] = responseCode.code === 404;   \n    postman.setNextRequest(null);\n   \n} else {\n    \n    tests['Status 200 OK - GET /vet/loadlocal/'  + id ] = responseCode.code === 200;   \n    postman.setNextRequest(\"GET loadlocal FOR INVALID ID\");\n    \n    \n}\n    \n}catch(e){\n   var errormessage = { 'method' : request.method, 'url' : request.url, 'error':e.message };\n   var temp = environment.error_collector? (postman.getEnvironmentVariable(\"error_collector\") + \" \" + \"|\" + \" \") : \"\";\n   postman.setEnvironmentVariable(\"error_collector\",temp + JSON.stringify(errormessage));\n   tests[\"Unexpected Error Occurred - \"+ e.message] = true === false;\n}\n\n"
-							}
-						},
-						{
-							"listen": "prerequest",
-							"script": {
-								"type": "text/javascript",
-								"exec": "//Verify if id is availble as an environment variable. If not, provide a default value to it\nconsole.log(_.has(environment,\"id\"));\n//console.log(_.some(environment, function() { return _.has(environment, \"id\"); }));\n\nif (_.has(environment,\"id\")){\n    console.log(environment.id);\n}else{\n    postman.setEnvironmentVariable(\"id\", 1);\n}\n"
-							}
-						}
-					],
-					"request": {
-						"auth": {
-							"type": "basic",
-							"basic": {
-								"username": "smartenergySuperuser",
-								"password": "sunpower1",
-								"saveHelperData": true,
-								"showPassword": false
-							}
-						},
-						"url": "{{URI}}/VET/loadlocal/{{id}}",
-						"method": "GET",
-						"header": [
-							{
-								"key": "Accept",
-								"value": "application/json",
-								"description": ""
-							},
-							{
-								"key": "X-CSRFToken",
-								"value": "yGXetadw771nTTkNkankd9OeNAlbDqwsXOCUWLT3W7LgmxeCnIbkkyrXAFvQq5Ab",
-								"description": ""
-							},
-							{
-								"key": "Authorization",
-								"value": "Basic c21hcnRlbmVyZ3lTdXBlcnVzZXI6c3VucG93ZXIx",
-								"description": ""
-							}
-						],
-						"body": {
-							"mode": "formdata",
-							"formdata": []
-						},
-						"description": ""
-					},
-					"response": []
-				},
-				{
-					"name": "GET loadlocal FOR INVALID  ID",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"type": "text/javascript",
-								"exec": "try{\n    tests[\"Status 404 Not Found - GET Invalid id /vet/loadlocal/A1\"] = responseCode.code === 404 ;\n    postman.setNextRequest(\"DELETE loadlocal WITH VALID EXISTANT ID\");\n} catch(e){\n    \n   var errormessage = { 'method' : request.method, 'url' : request.url, 'error':e.message };\n   var temp = environment.error_collector? (postman.getEnvironmentVariable(\"error_collector\") + \" \" + \"|\" + \" \") : \"\";\n   postman.setEnvironmentVariable(\"error_collector\",temp + JSON.stringify(errormessage));\n   tests[\"Unexpected Error Occurred - \"+ e.message] = true === false;\n}"
-							}
-						}
-					],
-					"request": {
-						"auth": {
-							"type": "basic",
-							"basic": {
-								"username": "smartenergySuperuser",
-								"password": "sunpower1",
-								"saveHelperData": true,
-								"showPassword": false
-							}
-						},
-						"url": "{{URI}}/VET/loadlocal/A1",
-						"method": "GET",
-						"header": [
-							{
-								"key": "Accept",
-								"value": "application/json",
-								"description": ""
-							},
-							{
-								"key": "X-CSRFToken",
-								"value": "yGXetadw771nTTkNkankd9OeNAlbDqwsXOCUWLT3W7LgmxeCnIbkkyrXAFvQq5Ab",
-								"description": ""
-							},
-							{
-								"key": "Authorization",
-								"value": "Basic c21hcnRlbmVyZ3lTdXBlcnVzZXI6c3VucG93ZXIx",
-								"description": ""
-							}
-						],
-						"body": {
-							"mode": "formdata",
-							"formdata": []
-						},
-						"description": "Returns 404 page not found error as invalid object does not exists."
-					},
-					"response": []
-				},
-				{
-					"name": "DELETE loadlocal WITH VALID EXISTANT ID",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"type": "text/javascript",
-								"exec": "try{\n   tests[\"loadlocal with id \" + environment.id + \" deleted successfully\"] = (responseCode.code === 204 || responseCode.code === 200);\n   postman.setNextRequest(\"GET loadlocal FOR VALID NON EXISTENT ID\");\n}catch(e){\n   var errormessage = { 'method' : request.method, 'url' : request.url, 'error':e.message };\n   var temp = environment.error_collector? (postman.getEnvironmentVariable(\"error_collector\") + \" \" + \"|\" + \" \") : \"\";\n   postman.setEnvironmentVariable(\"error_collector\",temp + JSON.stringify(errormessage));\n   tests[\"Unexpected Error Occurred - \"+ e.message] = true === false;\n   postman.setNextRequest(null);\n}\n"
-							}
-						}
-					],
-					"request": {
-						"url": "{{URI}}/VET/loadlocal/{{id}}",
-						"method": "DELETE",
-						"header": [
-							{
-								"key": "Accept",
-								"value": "application/json",
-								"description": ""
-							},
-							{
-								"key": "X-CSRFToken",
-								"value": "yGXetadw771nTTkNkankd9OeNAlbDqwsXOCUWLT3W7LgmxeCnIbkkyrXAFvQq5Ab",
-								"description": ""
-							},
-							{
-								"key": "Authorization",
-								"value": "Basic c21hcnRlbmVyZ3lTdXBlcnVzZXI6c3VucG93ZXIx",
-								"description": ""
-							}
-						],
-						"body": {
-							"mode": "formdata",
-							"formdata": []
-						},
-						"description": ""
-					},
-					"response": []
-				},
-				{
-					"name": "GET loadlocal FOR VALID NON EXISTENT ID",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"type": "text/javascript",
-								"exec": "try{\n    tests[\"Status 404 Not Found - GET /VET/loadlocal/\"+ environment.id] = responseCode.code === 404 ;\n    postman.setNextRequest(\"DELETE loadlocal WITH VALID NON EXISTANT ID\");\n} catch(e){\n    \n   var errormessage = { 'method' : request.method, 'url' : request.url, 'error':e.message };\n   var temp = environment.error_collector? (postman.getEnvironmentVariable(\"error_collector\") + \" \" + \"|\" + \" \") : \"\";\n   postman.setEnvironmentVariable(\"error_collector\",temp + JSON.stringify(errormessage));\n   tests[\"Unexpected Error Occurred - \"+ e.message] = true === false;\n   postman.setNextRequest(null);\n}"
-							}
-						}
-					],
-					"request": {
-						"auth": {
-							"type": "basic",
-							"basic": {
-								"username": "smartenergySuperuser",
-								"password": "sunpower1",
-								"saveHelperData": true,
-								"showPassword": false
-							}
-						},
-						"url": "{{URI}}/VET/loadlocal/{{id}}",
-						"method": "GET",
-						"header": [
-							{
-								"key": "Accept",
-								"value": "application/json",
-								"description": ""
-							},
-							{
-								"key": "X-CSRFToken",
-								"value": "yGXetadw771nTTkNkankd9OeNAlbDqwsXOCUWLT3W7LgmxeCnIbkkyrXAFvQq5Ab",
-								"description": ""
-							},
-							{
-								"key": "Authorization",
-								"value": "Basic c21hcnRlbmVyZ3lTdXBlcnVzZXI6c3VucG93ZXIx",
-								"description": ""
-							}
-						],
-						"body": {
-							"mode": "formdata",
-							"formdata": []
-						},
-						"description": "Returns 404 page not found error as the input is valid but not in existence anymore."
-					},
-					"response": []
-				},
-				{
-					"name": "DELETE loadlocal WITH VALID NON EXISTANT ID",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"type": "text/javascript",
-								"exec": "try{\n   tests[\"loadlocal with id \" + environment.id + \" should not exist as it is already deleted\"] = (responseCode.code === 404) ;\n   //postman.setNextRequest(\"POST /VET/QuoteEng FOR EMPTY LOADLOCAL\");\n}catch(e){\n   var errormessage = { 'method' : request.method, 'url' : request.url, 'error':e.message };\n   var temp = environment.error_collector? (postman.getEnvironmentVariable(\"error_collector\") + \" \" + \"|\" + \" \") : \"\";\n   postman.setEnvironmentVariable(\"error_collector\",temp + JSON.stringify(errormessage));\n   tests[\"Unexpected Error Occurred - \"+ e.message] = true === false;\n   postman.setNextRequest(null);\n}\n"
-							}
-						}
-					],
-					"request": {
-						"url": "{{URI}}/VET/loadlocal/{{id}}",
-						"method": "DELETE",
-						"header": [
-							{
-								"key": "Accept",
-								"value": "application/json",
-								"description": ""
-							},
-							{
-								"key": "X-CSRFToken",
-								"value": "yGXetadw771nTTkNkankd9OeNAlbDqwsXOCUWLT3W7LgmxeCnIbkkyrXAFvQq5Ab",
-								"description": ""
-							},
-							{
-								"key": "Authorization",
-								"value": "Basic c21hcnRlbmVyZ3lTdXBlcnVzZXI6c3VucG93ZXIx",
-								"description": ""
-							}
-						],
-						"body": {
-							"mode": "formdata",
-							"formdata": []
-						},
-						"description": ""
 					},
 					"response": []
 				}
