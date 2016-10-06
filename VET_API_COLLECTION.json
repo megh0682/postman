@@ -129,7 +129,7 @@
 					},
 					"response": []
 				},
-				{
+				/*{
 					"name": "POST loadlocal WITH AN EMPTY UPLOAD",
 					"event": [
 						{
@@ -187,7 +187,7 @@
 						"description": "This request is a POST request to /VET/loadlocal/ endpoint.\nHere upload field accepts multipart/form data\nOnly required field here is name."
 					},
 					"response": []
-				},
+				},*/
 				{
 					"name": "GET loadlocal",
 					"event": [
