@@ -452,7 +452,7 @@
 							"listen": "test",
 							"script": {
 								"type": "text/javascript",
-								"exec": "try{\n   tests[\"loadlocal with id \" + environment.id + \" deleted successfully\"] = (responseCode.code === 204 || responseCode.code === 200);\n   postman.setNextRequest(\"GET loadlocal FOR VALID NON EXISTENT ID\");\n}catch(e){\n   var errormessage = { 'method' : request.method, 'url' : request.url, 'error':e.message };\n   var temp = environment.error_collector? (postman.getEnvironmentVariable(\"error_collector\") + \" \" + \"|\" + \" \") : \"\";\n   postman.setEnvironmentVariable(\"error_collector\",temp + JSON.stringify(errormessage));\n   tests[\"Unexpected Error Occurred - \"+ e.message] = true === false;\n   postman.setNextRequest(null);\n}\n"
+								"exec": "try{\n   tests[\"loadlocal with id \" + environment.id + \" deleted successfully\"] = (responseCode.code === 204);\n   postman.setNextRequest(\"GET loadlocal FOR VALID NON EXISTENT ID\");\n}catch(e){\n   var errormessage = { 'method' : request.method, 'url' : request.url, 'error':e.message };\n   var temp = environment.error_collector? (postman.getEnvironmentVariable(\"error_collector\") + \" \" + \"|\" + \" \") : \"\";\n   postman.setEnvironmentVariable(\"error_collector\",temp + JSON.stringify(errormessage));\n   tests[\"Unexpected Error Occurred - \"+ e.message] = true === false;\n   postman.setNextRequest(null);\n}\n"
 							}
 						}
 					],
