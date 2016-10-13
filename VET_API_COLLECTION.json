@@ -474,7 +474,23 @@
 								"key": "Authorization",
 								"value": "Basic c21hcnRlbmVyZ3lTdXBlcnVzZXI6c3VucG93ZXIx",
 								"description": ""
+							},
+							{
+								"key": "Pragma",
+								"value": "no-cache",
+								"description": ""
+							},
+							{
+								"key": "Postman-Token",
+								"value": "a2310084-eb0e-f6f8-aac7-177ab955efd5",
+								"description": ""
+							},
+							{
+								"key": "Accept-Language",
+								"value": "en-US,en;q=0.8",
+								"description": ""
 							}
+							
 						],
 						"body": {
 							"mode": "formdata",
@@ -560,6 +576,21 @@
 							{
 								"key": "Authorization",
 								"value": "Basic c21hcnRlbmVyZ3lTdXBlcnVzZXI6c3VucG93ZXIx",
+								"description": ""
+							},
+							{
+								"key": "Pragma",
+								"value": "no-cache",
+								"description": ""
+							},
+							{
+								"key": "Postman-Token",
+								"value": "a2310084-eb0e-f6f8-aac7-177ab955efd5",
+								"description": ""
+							},
+							{
+								"key": "Accept-Language",
+								"value": "en-US,en;q=0.8",
 								"description": ""
 							}
 						],
@@ -725,6 +756,21 @@
 							{
 								"key": "Authorization",
 								"value": "Basic c21hcnRlbmVyZ3lTdXBlcnVzZXI6c3VucG93ZXIx",
+								"description": ""
+							},
+							{
+								"key": "Pragma",
+								"value": "no-cache",
+								"description": ""
+							},
+							{
+								"key": "Postman-Token",
+								"value": "a2310084-eb0e-f6f8-aac7-177ab955efd5",
+								"description": ""
+							},
+							{
+								"key": "Accept-Language",
+								"value": "en-US,en;q=0.8",
 								"description": ""
 							}
 						],
