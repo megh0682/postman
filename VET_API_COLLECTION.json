@@ -462,16 +462,6 @@
 						"method": "DELETE",
 						"header": [
 							{
-								"key": "Pragma",
-								"value": "no-cache",
-								"description": ""
-							},
-							{
-								"key": "Accept-Language",
-								"value": "en-US,en;q=0.8",
-								"description": ""
-							},
-							{
 								"key": "Accept",
 								"value": "application/json",
 								"description": ""
@@ -489,21 +479,6 @@
 							{
 								"key": "Postman-Token",
 								"value": "a2310084-eb0e-f6f8-aac7-177ab955efd5",
-								"description": ""
-							},
-							{
-								"key": "Pragma",
-								"value": "no-cache",
-								"description": ""
-							},
-							{
-								"key": "Postman-Token",
-								"value": "a2310084-eb0e-f6f8-aac7-177ab955efd5",
-								"description": ""
-							},
-							{
-								"key": "Accept-Language",
-								"value": "en-US,en;q=0.8",
 								"description": ""
 							}
 							
@@ -580,16 +555,6 @@
 						"method": "DELETE",
 						"header": [
 							{
-								"key": "Pragma",
-								"value": "no-cache",
-								"description": ""
-							},
-							{
-								"key": "Accept-Language",
-								"value": "en-US,en;q=0.8",
-								"description": ""
-							},
-							{
 								"key": "Accept",
 								"value": "application/json",
 								"description": ""
@@ -608,22 +573,8 @@
 								"key": "Postman-Token",
 								"value": "a2310084-eb0e-f6f8-aac7-177ab955efd5",
 								"description": ""
-							},
-							{
-								"key": "Pragma",
-								"value": "no-cache",
-								"description": ""
-							},
-							{
-								"key": "Postman-Token",
-								"value": "a2310084-eb0e-f6f8-aac7-177ab955efd5",
-								"description": ""
-							},
-							{
-								"key": "Accept-Language",
-								"value": "en-US,en;q=0.8",
-								"description": ""
 							}
+							
 						],
 						"body": {
 							"mode": "formdata",
@@ -774,16 +725,7 @@
 						"url": "{{URI}}/VET/loadlocal/{{id}}",
 						"method": "DELETE",
 						"header": [
-							{
-								"key": "Pragma",
-								"value": "no-cache",
-								"description": ""
-							},
-							{
-								"key": "Accept-Language",
-								"value": "en-US,en;q=0.8",
-								"description": ""
-							},
+							
 							{
 								"key": "Accept",
 								"value": "application/json",
@@ -802,21 +744,6 @@
 							{
 								"key": "Postman-Token",
 								"value": "a2310084-eb0e-f6f8-aac7-177ab955efd5",
-								"description": ""
-							},
-							{
-								"key": "Pragma",
-								"value": "no-cache",
-								"description": ""
-							},
-							{
-								"key": "Postman-Token",
-								"value": "a2310084-eb0e-f6f8-aac7-177ab955efd5",
-								"description": ""
-							},
-							{
-								"key": "Accept-Language",
-								"value": "en-US,en;q=0.8",
 								"description": ""
 							}
 						],
