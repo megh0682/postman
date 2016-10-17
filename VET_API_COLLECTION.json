@@ -460,30 +460,41 @@
 					"request": {
 						"url": "{{URI}}/VET/loadlocal/{{id}}",
 						"method": "DELETE",
-						"header": [
-							{
-								"key": "Accept",
-								"value": "application/json",
-								"description": ""
-							},
-							{
-								"key": "Authorization",
-								"value": "Basic c21hcnRlbmVyZ3lTdXBlcnVzZXI6c3VucG93ZXIx",
-								"description": ""
-							},
-							{
-								"key": "X-CSRFToken",
-								"value": "yGXetadw771nTTkNkankd9OeNAlbDqwsXOCUWLT3W7LgmxeCnIbkkyrXAFvQq5Ab",
-								"description": ""
-							},
-							{
-								"key": "Postman-Token",
-								"value": "a2310084-eb0e-f6f8-aac7-177ab955efd5",
-								"description": ""
-							}
-							
-							
-						],
+			"header": [{
+					"key": "Accept",
+
+
+					"value": "application/json",
+					"description": ""
+				},
+
+
+				{
+					"key":
+
+						"Authorization",
+					"value": "Basic c21hcnRlbmVyZ3lTdXBlcnVzZXI6c3VucG93ZXIx",
+
+
+					"description": ""
+				},
+
+
+				{
+					"key": "X-CSRFToken",
+					"value":
+
+						"yGXetadw771nTTkNkankd9OeNAlbDqwsXOCUWLT3W7LgmxeCnIbkkyrXAFvQq5Ab",
+					"description": ""
+				},
+
+
+				{
+					"key": "Postman-Token",
+					"value": "a2310084-eb0e-f6f8-aac7 - 177 ab955efd5 ",
+					"description": ""
+				}
+			],
 						"body": {
 							"mode": "formdata",
 							"formdata": []
