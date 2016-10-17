@@ -18,7 +18,7 @@
 							"listen": "test",
 							"script": {
 								"type": "text/javascript",
-								"exec": "//var expected_upload_url = environment.S3 + request.data.upload[0].name;\ntry{\n   //Assert the success code\n   tests[\"Status 201 - Resource Created\"] = responseCode.code === 201;\n   \n   if( responseCode.code === 201){\n   var json = JSON.parse(responseBody);\n   //Assert imports_after and imports_before has 8760 elements\n   tests[\"id object exists in response\"] = (typeof(json.id) !== \"undefined\");\n   tests[\"name object exists in response\"] =(typeof(json.name) !== \"undefined\");\n   tests[\"model_input object exists in response\"] = (typeof(json.model_input) !== \"undefined\");\n   tests[\"upload object exists in response\"] =(typeof(json.upload) !== \"undefined\");\n   //tests[request.data.upload[0].name + \" uploaded to \" + environment.S3] = json.upload === expected_upload_url;\n   //Put name and id fields in the environment variables\n   postman.setEnvironmentVariable(\"loadlocal_filename\", json.name);\n   postman.setEnvironmentVariable(\"id\", json.id);\n   postman.setNextRequest(\"POST loadlocal WITH AN EXISTING NAME\");  \n   }\n}catch(e){\n   var errormessage = { 'method' : request.method, 'url' : request.url, 'error':e.message };\n   var temp = environment.error_collector? (postman.getEnvironmentVariable(\"error_collector\") + \" \" + \"|\" + \" \") : \"\";\n   postman.setEnvironmentVariable(\"error_collector\",temp + JSON.stringify(errormessage));\n   tests[\"Unexpected Error Occurred - \"+ e.message] = true === false;\n   postman.setNextRequest(null);\n}\n\n\n\n"
+								"exec": "try{\n   //Assert the success code\n   tests[\"Status 201 - Resource Created\"] = responseCode.code === 201;\n   \n   if( responseCode.code === 201){\n   var json = JSON.parse(responseBody);\n   //Assert imports_after and imports_before has 8760 elements\n   tests[\"id object exists in response\"] = (typeof(json.id) !== \"undefined\");\n   tests[\"name object exists in response\"] =(typeof(json.name) !== \"undefined\");\n   tests[\"model_input object exists in response\"] = (typeof(json.model_input) !== \"undefined\");\n   tests[\"upload object exists in response\"] =(typeof(json.upload) !== \"undefined\");\n   //Put name and id fields in the environment variables\n   postman.setEnvironmentVariable(\"loadlocal_filename\", json.name);\n   postman.setEnvironmentVariable(\"id\", json.id);\n   postman.setNextRequest(\"POST loadlocal WITH AN EXISTING NAME\");  \n   }\n}catch(e){\n   var errormessage = { 'method' : request.method, 'url' : request.url, 'error':e.message };\n   var temp = environment.error_collector? (postman.getEnvironmentVariable(\"error_collector\") + \" \" + \"|\" + \" \") : \"\";\n   postman.setEnvironmentVariable(\"error_collector\",temp + JSON.stringify(errormessage));\n   tests[\"Unexpected Error Occurred - \"+ e.message] = true === false;\n   postman.setNextRequest(null);\n}\n\n\n\n"
 							}
 						},
 						{
@@ -54,7 +54,7 @@
 							"formdata": [
 								{
 									"key": "upload",
-									"value": "USA_AL_Montgomery-Dannelly.Field.722260_TMY3_BASE.csv",
+									"src": "USA_AL_Montgomery-Dannelly.Field.722260_TMY3_BASE.csv",
 									"type": "file",
 									"enabled": true
 								},
@@ -77,7 +77,7 @@
 							"listen": "test",
 							"script": {
 								"type": "text/javascript",
-								"exec": "try{\n   //Assert the success code\n   tests[\"Status 400 - Bad Request\"] = responseCode.code === 400;\n   postman.setNextRequest(\"POST loadlocal WITH AN EMPTY UPLOAD\");  \n \n}catch(e){\n   var errormessage = { 'method' : request.method, 'url' : request.url, 'error':e.message };\n   var temp = environment.error_collector? (postman.getEnvironmentVariable(\"error_collector\") + \" \" + \"|\" + \" \") : \"\";\n   postman.setEnvironmentVariable(\"error_collector\",temp + JSON.stringify(errormessage));\n   tests[\"Unexpected Error Occurred - \"+ e.message] = true === false;\n   postman.setNextRequest(null);\n}\n\n\n\n"
+								"exec": "try{\n   //Assert the success code\n   tests[\"Status 400 - Bad Request\"] = responseCode.code === 400;\n   postman.setNextRequest(\"GET loadlocal\");  \n \n}catch(e){\n   var errormessage = { 'method' : request.method, 'url' : request.url, 'error':e.message };\n   var temp = environment.error_collector? (postman.getEnvironmentVariable(\"error_collector\") + \" \" + \"|\" + \" \") : \"\";\n   postman.setEnvironmentVariable(\"error_collector\",temp + JSON.stringify(errormessage));\n   tests[\"Unexpected Error Occurred - \"+ e.message] = true === false;\n   postman.setNextRequest(null);\n}\n\n\n\n"
 							}
 						},
 						{
@@ -113,72 +113,13 @@
 							"formdata": [
 								{
 									"key": "upload",
-									"value": "USA_AL_Montgomery-Dannelly.Field.722260_TMY3_BASE.csv",
+									"src": "USA_AL_Montgomery-Dannelly.Field.722260_TMY3_BASE.csv",
 									"type": "file",
 									"enabled": true
 								},
 								{
 									"key": "name",
 									"value": "{{loadlocal_filename}}",
-									"type": "text",
-									"enabled": true
-								}
-							]
-						},
-						"description": "This request is a POST request to /VET/loadlocal/ endpoint.\nHere upload field accepts multipart/form data\nOnly required field here is name."
-					},
-					"response": []
-				},
-				{
-					"name": "POST loadlocal WITH AN EMPTY UPLOAD",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"type": "text/javascript",
-								"exec": "try{\n   //Assert the error code\n   tests[\"Status 400 - Bad Request\"] = responseCode.code === 400;\n   postman.setNextRequest(\"GET loadlocal\");\n}catch(e){\n   var errormessage = { 'method' : request.method, 'url' : request.url, 'error':e.message };\n   var temp = environment.error_collector? (postman.getEnvironmentVariable(\"error_collector\") + \" \" + \"|\" + \" \") : \"\";\n   postman.setEnvironmentVariable(\"error_collector\",temp + JSON.stringify(errormessage));\n   tests[\"Unexpected Error Occurred - \"+ e.message] = true === false;\n   postman.setNextRequest(null);\n}\n\n\n\n"
-							}
-						},
-						{
-							"listen": "prerequest",
-							"script": {
-								"type": "text/javascript",
-								"exec": "\n\n"
-							}
-						}
-					],
-					"request": {
-						"url": "{{URI}}/VET/loadlocal/",
-						"method": "POST",
-						"header": [
-							{
-								"key": "Accept",
-								"value": "application/json",
-								"description": ""
-							},
-							{
-								"key": "X-CSRFToken",
-								"value": "yGXetadw771nTTkNkankd9OeNAlbDqwsXOCUWLT3W7LgmxeCnIbkkyrXAFvQq5Ab",
-								"description": ""
-							},
-							{
-								"key": "Authorization",
-								"value": "Basic c21hcnRlbmVyZ3lTdXBlcnVzZXI6c3VucG93ZXIx",
-								"description": ""
-							}
-						],
-						"body": {
-							"mode": "formdata",
-							"formdata": [
-								{
-									"key": "upload",
-									"value": "",
-									"type": "file",
-									"enabled": true
-								},
-								{
-									"key": "name",
-									"value": "_postman_{{timestamp}}",
 									"type": "text",
 									"enabled": true
 								}
@@ -250,7 +191,7 @@
 							"listen": "test",
 							"script": {
 								"type": "text/javascript",
-								"exec": "try{\n    \nvar page_number = environment.page_number;\n\ntests[\"Status 200 OK\" +  \" = GET /VET/loadlocal?page=\" + page_number ] = responseCode.code === 200;\n\nvar json = JSON.parse(responseBody);\n\n if(responseCode.code === 200){\n    \n//check if there is a next page. If yes, get the page number for the page and call the vet/loadlocal?page={{page_number}} api\n    \n    if(json.next !== null){\n       \n        var next = json.next;\n        \n        try {\n                var startIndex = next.indexOf(\"page\");\n                var page_number = next.substring(startIndex + 5);\n                console.log(page_number);\n                postman.setEnvironmentVariable(\"page_number\", page_number);\n                postman.setNextRequest(\"GET loadlocal PER PAGE NUMBER\");   \n                \n        } catch (e) {\n                \n                console.error(\"Malformed next page URL - \", e.message);\n                postman.setNextRequest(null);  \n        }\n        \n    }else{\n        postman.setNextRequest(\"GET loadlocal FOR VALID PAGE NUMBER\");  \n    }\n    \n      \n        \n  }\n  \n\n} catch(e){\n    \n   var errormessage = { 'method' : request.method, 'url' : request.url, 'error':e.message };\n   var temp = environment.error_collector? (postman.getEnvironmentVariable(\"error_collector\") + \" \" + \"|\" + \" \") : \"\";\n   postman.setEnvironmentVariable(\"error_collector\",temp + JSON.stringify(errormessage));\n   tests[\"Unexpected Error Occurred - \"+ e.message] = true === false;\n   \n}\n        \n  "
+								"exec": "try{\n    \nvar page_number = environment.page_number;\n\ntests[\"Status 200 OK\" +  \" = GET /VET/loadlocal?page=\" + page_number ] = responseCode.code === 200;\n\nvar json = JSON.parse(responseBody);\n\n if(responseCode.code === 200){\n    \n//check if there is a next page. If yes, get the page number for the page and call the vet/loadlocal?page={{page_number}} api\n    \n    if(json.next !== null){\n       \n        var next = json.next;\n        \n        try {\n                var startIndex = next.indexOf(\"page\");\n                var page_number = next.substring(startIndex + 5);\n                console.log(page_number);\n                postman.setEnvironmentVariable(\"page_number\", page_number);\n                postman.setNextRequest(\"GET loadlocal PER PAGE NUMBER\");   \n                \n        } catch (e) {\n                \n                console.error(\"Malformed next page URL - \", e.message);\n                postman.setNextRequest(null);  \n        }\n        \n    }else{ postman.setNextRequest(\"GET loadlocal FOR VALID PAGE NUMBER\");}   \n        \n  }\n  \n\n} catch(e){\n    \n   var errormessage = { 'method' : request.method, 'url' : request.url, 'error':e.message };\n   var temp = environment.error_collector? (postman.getEnvironmentVariable(\"error_collector\") + \" \" + \"|\" + \" \") : \"\";\n   postman.setEnvironmentVariable(\"error_collector\",temp + JSON.stringify(errormessage));\n   tests[\"Unexpected Error Occurred - \"+ e.message] = true === false;\n   \n}\n        \n  "
 							}
 						},
 						{
@@ -511,7 +452,7 @@
 							"listen": "test",
 							"script": {
 								"type": "text/javascript",
-								"exec": "try{\n   tests[\"loadlocal with id \" + environment.id + \" deleted successfully\"] = (responseCode.code === 204);\n   postman.setNextRequest(\"GET loadlocal FOR VALID NON EXISTENT ID\");\n}catch(e){\n   var errormessage = { 'method' : request.method, 'url' : request.url, 'error':e.message };\n   var temp = environment.error_collector? (postman.getEnvironmentVariable(\"error_collector\") + \" \" + \"|\" + \" \") : \"\";\n   postman.setEnvironmentVariable(\"error_collector\",temp + JSON.stringify(errormessage));\n   tests[\"Unexpected Error Occurred - \"+ e.message] = true === false;\n   postman.setNextRequest(null);\n}\n"
+								"exec": "try{\n   tests[\"loadlocal with id \" + environment.id + \" deleted successfully\"] = (responseCode.code === 204 || responseCode.code === 200);\n   postman.setNextRequest(\"GET loadlocal FOR VALID NON EXISTENT ID\");\n}catch(e){\n   var errormessage = { 'method' : request.method, 'url' : request.url, 'error':e.message };\n   var temp = environment.error_collector? (postman.getEnvironmentVariable(\"error_collector\") + \" \" + \"|\" + \" \") : \"\";\n   postman.setEnvironmentVariable(\"error_collector\",temp + JSON.stringify(errormessage));\n   tests[\"Unexpected Error Occurred - \"+ e.message] = true === false;\n   postman.setNextRequest(null);\n}\n"
 							}
 						}
 					],
@@ -520,23 +461,8 @@
 						"method": "DELETE",
 						"header": [
 							{
-								"key": "Pragma",
-								"value": "no-cache",
-								"description": ""
-							},
-							{
-								"key": "Accept-Language",
-								"value": "en-US,en;q=0.8",
-								"description": ""
-							},
-							{
 								"key": "Accept",
 								"value": "application/json",
-								"description": ""
-							},
-							{
-								"key": "Authorization",
-								"value": "Basic c21hcnRlbmVyZ3lTdXBlcnVzZXI6c3VucG93ZXIx",
 								"description": ""
 							},
 							{
@@ -545,26 +471,10 @@
 								"description": ""
 							},
 							{
-								"key": "Postman-Token",
-								"value": "a2310084-eb0e-f6f8-aac7-177ab955efd5",
-								"description": ""
-							},
-							{
-								"key": "Pragma",
-								"value": "no-cache",
-								"description": ""
-							},
-							{
-								"key": "Postman-Token",
-								"value": "a2310084-eb0e-f6f8-aac7-177ab955efd5",
-								"description": ""
-							},
-							{
-								"key": "Accept-Language",
-								"value": "en-US,en;q=0.8",
+								"key": "Authorization",
+								"value": "Basic c21hcnRlbmVyZ3lTdXBlcnVzZXI6c3VucG93ZXIx",
 								"description": ""
 							}
-							
 						],
 						"body": {
 							"mode": "formdata",
@@ -638,23 +548,8 @@
 						"method": "DELETE",
 						"header": [
 							{
-								"key": "Pragma",
-								"value": "no-cache",
-								"description": ""
-							},
-							{
-								"key": "Accept-Language",
-								"value": "en-US,en;q=0.8",
-								"description": ""
-							},
-							{
 								"key": "Accept",
 								"value": "application/json",
-								"description": ""
-							},
-							{
-								"key": "Authorization",
-								"value": "Basic c21hcnRlbmVyZ3lTdXBlcnVzZXI6c3VucG93ZXIx",
 								"description": ""
 							},
 							{
@@ -663,23 +558,8 @@
 								"description": ""
 							},
 							{
-								"key": "Postman-Token",
-								"value": "a2310084-eb0e-f6f8-aac7-177ab955efd5",
-								"description": ""
-							},
-							{
-								"key": "Pragma",
-								"value": "no-cache",
-								"description": ""
-							},
-							{
-								"key": "Postman-Token",
-								"value": "a2310084-eb0e-f6f8-aac7-177ab955efd5",
-								"description": ""
-							},
-							{
-								"key": "Accept-Language",
-								"value": "en-US,en;q=0.8",
+								"key": "Authorization",
+								"value": "Basic c21hcnRlbmVyZ3lTdXBlcnVzZXI6c3VucG93ZXIx",
 								"description": ""
 							}
 						],
@@ -704,7 +584,7 @@
 							"listen": "test",
 							"script": {
 								"type": "text/javascript",
-								"exec": "//var expected_upload_url = environment.S3 + request.data.upload[0].name;\ntry{\n   //Assert the success code\n   tests[\"Status 201 - Resource Created\"] = responseCode.code === 201;\n   \n   if( responseCode.code === 201){\n   var json = JSON.parse(responseBody);\n   //Assert imports_after and imports_before has 8760 elements\n   tests[\"id object exists in response\"] = (typeof(json.id) !== \"undefined\");\n   tests[\"name object exists in response\"] =(typeof(json.name) !== \"undefined\");\n   tests[\"model_input object exists in response\"] = (typeof(json.model_input) !== \"undefined\");\n   tests[\"upload object exists in response\"] =(typeof(json.upload) !== \"undefined\");\n  // tests[request.data.upload[0].name + \" uploaded to \" + environment.S3] = json.upload === expected_upload_url;\n   //Put name and id fields in the environment variables\n   postman.setEnvironmentVariable(\"loadlocal_filename\", json.name);\n   postman.setEnvironmentVariable(\"id\", json.id);\n   postman.setNextRequest(\"RUN /VET/QuoteEng SCENARIO\");\n   }\n}catch(e){\n   var errormessage = { 'method' : request.method, 'url' : request.url, 'error':e.message };\n   var temp = environment.error_collector? (postman.getEnvironmentVariable(\"error_collector\") + \" \" + \"|\" + \" \") : \"\";\n   postman.setEnvironmentVariable(\"error_collector\",temp + JSON.stringify(errormessage));\n   tests[\"Unexpected Error Occurred - \"+ e.message] = true === false;\n   postman.setNextRequest(null);\n}\n\n\n\n"
+								"exec": "try{\n   //Assert the success code\n   tests[\"Status 201 - Resource Created\"] = responseCode.code === 201;\n   \n   if( responseCode.code === 201){\n   var json = JSON.parse(responseBody);\n   //Assert imports_after and imports_before has 8760 elements\n   tests[\"id object exists in response\"] = (typeof(json.id) !== \"undefined\");\n   tests[\"name object exists in response\"] =(typeof(json.name) !== \"undefined\");\n   tests[\"model_input object exists in response\"] = (typeof(json.model_input) !== \"undefined\");\n   tests[\"upload object exists in response\"] =(typeof(json.upload) !== \"undefined\");\n   //Put name and id fields in the environment variables\n   postman.setEnvironmentVariable(\"loadlocal_filename\", json.name);\n   postman.setEnvironmentVariable(\"id\", json.id);\n   postman.setNextRequest(\"RUN /VET/QuoteEng SCENARIO\");\n   }\n}catch(e){\n   var errormessage = { 'method' : request.method, 'url' : request.url, 'error':e.message };\n   var temp = environment.error_collector? (postman.getEnvironmentVariable(\"error_collector\") + \" \" + \"|\" + \" \") : \"\";\n   postman.setEnvironmentVariable(\"error_collector\",temp + JSON.stringify(errormessage));\n   tests[\"Unexpected Error Occurred - \"+ e.message] = true === false;\n   postman.setNextRequest(null);\n}\n\n\n\n"
 							}
 						},
 						{
@@ -740,7 +620,7 @@
 							"formdata": [
 								{
 									"key": "upload",
-									"value": "USA_AL_Montgomery-Dannelly.Field.722260_TMY3_BASE.csv",
+									"src": "USA_AL_Montgomery-Dannelly.Field.722260_TMY3_BASE.csv",
 									"type": "file",
 									"enabled": true
 								},
@@ -763,7 +643,7 @@
 							"listen": "test",
 							"script": {
 								"type": "text/javascript",
-								"exec": "//console.log(request.data);\ntry {\n  //Assert the success code\n  tests[\"Status 201 - Resource Created\"] = responseCode.code === 201;\n\n  if (responseCode.code === 201) {\n    var json = JSON.parse(responseBody);\n    //Assert consumption, bills, system_production and payments object exists in the response\n    tests[\"consumption object exist in the response\"] = (typeof(json.consumption) !== \"undefined\");\n    tests[\"bills object exist in the response\"] = (typeof(json.bills) !== \"undefined\");\n    tests[\"system_production object exist in the response\"] = (typeof(json.system_production) !== \"undefined\");\n    tests[\"payments object exist in the response\"] = (typeof(json.payments) !== \"undefined\");\n    \n    //consumption object has 24 elements\n    var cnt_consumption = Object.keys(json.consumption).length;\n    //console.log(cnt_consumption);\n    tests[\"consumption object contains 24 elements\"] = cnt_consumption === 24 ;\n    //bills object has 24 elements\n    var cnt_bills = Object.keys(json.bills).length;\n    //console.log(cnt_bills);\n    tests[\"bills object contains 24 elements\"] = cnt_bills === 24 ;\n    \n    //system_production has 25 elements\n    var cnt_system_production = Object.keys(json.system_production).length;\n    //console.log(cnt_system_production);\n    tests[\"system_production object contains 25 elements\"] = cnt_system_production === 25 ;\n   \n    //payments has 2 elements\n    var cnt_payments = Object.keys(json.payments).length;\n    //console.log(cnt_payments);\n    tests[\"payments object contains 2 elements\"] = cnt_payments === 2 ;\n\n    postman.setNextRequest(\"DELETE THE LOADLOCAL\");\n\n  }\n} catch (e) {\n  var errormessage = {\n    'method': request.method,\n    'url': request.url,\n    'error': e.message\n  };\n  var temp = environment.error_collector ? (postman.getEnvironmentVariable(\"error_collector\") + \" \" + \"|\" + \" \") : \"\";\n  postman.setEnvironmentVariable(\"error_collector\", temp + JSON.stringify(errormessage));\n  tests[\"Unexpected Error Occurred - \" + e.message] = true === false;\n  postman.setNextRequest(null);\n}"
+								"exec": "//console.log(request.data);\ntry{\n   //Assert the success code\n   tests[\"Status 201 - Resource Created\"] = responseCode.code === 201;\n   \n   if( responseCode.code === 201){\n   var json = JSON.parse(responseBody);\n   //Assert imports_after and imports_before has 8760 elements\n   tests[\"imports_before object exist in the response\"] = (typeof(json.imports_before) !== \"undefined\");\n   tests[\"imports_before object has 8760 elements\"] =(json.imports_before.length === 8760);\n   tests[\"imports_after object exist in the response\"] = (typeof(json.imports_after) !== \"undefined\");\n   tests[\"imports_after object has 8760 elements\"] =(json.imports_after.length === 8760);\n   \n   //Assert bills and fineng_output object exist\n   tests[\"bills object exist in the response\"] = (typeof(json.bills) !== \"undefined\");\n   tests[\"fineng_output object exist in the response\"] = (typeof(json.fineng_output) !== \"undefined\");  \n    \n   postman.setNextRequest(\"DELETE THE LOADLOCAL\");\n   \n   }\n}catch(e){\n   var errormessage = { 'method' : request.method, 'url' : request.url, 'error':e.message };\n   var temp = environment.error_collector? (postman.getEnvironmentVariable(\"error_collector\") + \" \" + \"|\" + \" \") : \"\";\n   postman.setEnvironmentVariable(\"error_collector\",temp + JSON.stringify(errormessage));\n   tests[\"Unexpected Error Occurred - \"+ e.message] = true === false;\n   postman.setNextRequest(null);\n}"
 							}
 						},
 						{
@@ -811,7 +691,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"pv_configuration\": {\n\t\t\"Shortname\": \"megha_payload_oct14\",\n\t\t\"Street_And_Number\": \"50 Cape Cod\",\n\t\t\"City\": \"Irvine\",\n\t\t\"State\": \"CA\",\n\t\t\"Country\": \"US\",\n\t\t\"Zipcode\": 92620,\n\t\t\"SystemAzimuth\": 0.0,\n\t\t\"MountingSurfaceSlope\": 18.4,\n\t\t\"PVModuleId\": 654,\n\t\t\"MountingSystemId\": 22,\n\t\t\"Module_Quantity\": 15,\n\t\t\"StandardInverterId\": 1043,\n\t\t\"InverterCount\": 1000,\n\t\t\"Module_String_Count\": 1,\n\t\t\"ParallelStringCount\": 1000,\n\t\t\"MonthlyShading\": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],\n\t\t\"Latitude\": 37.910238,\n\t\t\"Longitude\": -122.357777\n\t},\n\t\"tariffengine_input\": {\n\t\t\"new_account\": \"false\",\n\t\t\"provider_account_id\": \"provider_account_id0\",\n\t\t\"tariff_input_name\": \"tariff_input_name\",\n\t\t\"account_name\": \"vet_demo_account\",\n\t\t\"lse_id\": 100747,\n\t\t\"master_tariff_id\": \"3250717\",\n\t\t\"before_solar_tariff_id\": \"3250717\",\n\t\t\"after_solar_tariff_id\": \"3250717\",\n\t\t\"rate_inflation_before_tariff\": \"1.5\",\n\t\t\"rate_inflation_after_tariff\": \"1.5\",\n\t\t\"rate_inflation_solar\": \"1.25\",\n\t\t\"solar_degradation\": \"1.5\",\n\t\t\"solar_price\": 50,\n\t\t\"solar_profile_id\": \"solar_profile_id\",\n\t\t\"system_size\": 3,\n\t\t\"load_profile_id\": \"load_profile_id\",\n\t\t\"customer_class_value\": \"1\",\n\t\t\"monthly_consumption_beans\": [[\"2015-01-01T00:00:00\", 1000, \"2015-02-01T00:00:00\"], \n                 [\"2015-02-01T00:00:00\", 1000, \"2015-03-01T00:00:00\"],\n                 [\"2015-03-01T00:00:00\",1000, \"2015-04-01T00:00:00\"],\n                 [\"2015-04-01T00:00:00\", 10, \"2015-05-01T00:00:00\"], \n                 [\"2015-05-01T00:00:00\", 1000, \"2015-06-01T00:00:00\"],\n                 [\"2015-06-01T00:00:00\", 10, \"2015-07-01T00:00:00\"],\n                 [\"2015-07-01T00:00:00\", 2000,\"2015-08-01T00:00:00\"], \n                 [\"2015-08-01T00:00:00\", 5000,\"2015-09-01T00:00:00\"],\n                 [\"2015-09-01T00:00:00\", 890.0786, \"2015-10-01T00:00:00\"],\n                 [\"2015-10-01T00:00:00\", 89, \"2015-11-01T00:00:00\"], \n                 [\"2015-11-01T00:00:00\", 98, \"2015-12-01T00:00:00\"],\n                 [\"2015-12-01T00:00:00\", 10, \"2016-01-01T00:00:00\"]]\n\t},\n\t\"fineng_input\": {\n\t\t\"quote_id\": 123456,\n\t\t\"time_stamp\": \"2015-09-27T00:00:00.000-0500\",\n\t\t\"business_sector\": \"Residential\",\n\t\t\"channel\": \"Indirect\",\n\t\t\"financing_options\": \"lease\",\n\t\t\"state_abbreviation\": \"CA\",\n\t\t\"utility\": \"PGE\",\n\t\t\"utility_id\": \"CA_II\",\n\t\t\"dealer\": \"Any Dealer\",\n\t\t\"dealer_id\": \"0018000000prb4aAAA\",\n\t\t\"dealer_oracle_id\": 45678,\n\t\t\"system_size\": 3.0,\n\t\t\"year_1_production\": 5400,\n\t\t\"system_price\": 60000.0,\n\t\t\"pricing_cost\": 24474.3,\n\t\t\"dealer_fee\": 12750,\n\t\t\"state_rebate\": 0.0,\n\t\t\"down_payment\": 0.0,\n\t\t\"escalator_rate\": 0.0,\n\t\t\"state_incentive\": [0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1],\n\t\t\"inverter_name\": [\"SMA sunny Boy\", \"another\"],\n\t\t\"inverter_id\": [5678, 567999],\n\t\t\"inverter_quantity\": [3, 1],\n\t\t\"panel_type\": \"dc\",\n\t\t\"pv_model\": \"327W WHT\",\n\t\t\"pv_model_name\": \"327 WHT\",\n\t\t\"number_of_modules\": 12,\n\t\t\"nem2_identifier\": 0,\n\t\t\"monthly_bill_before\": 100.7,\n\t\t\"monthly_bill_after\": 50.8\n\t},\n\t\"loadlocal\": \"postman_1476369225\",\n\t\"adjusted_load\": 12000.0,\n\t\"adjusted_yield\": 1700.0,\n\t\"annual_battery_degrad_rate\": 0.02,\n\t\"arrive_time_in_hours_from_noon\": 6.0,\n\t\"baseline_end_time_in_hours_from_noon\": 9.0,\n\t\"battery_energy_capacity\": 30.0,\n\t\"battery_max_power\": 3.0,\n\t\"battery_to_load_efficiency\": 0.95,\n\t\"degradation_factor\": 0.0025,\n\t\"degradation_model\": \"full\",\n\t\"dep_time_in_hours_from_noon\": 20.0,\n\t\"discharge_end_time\": 23.0,\n\t\"discharge_start_time\": 19.0,\n\t\"electric_water_heating\": \"No\",\n\t\"ev_battery_capacity\": 30.0,\n\t\"ev_charging_power\": 0,\n\t\"gas_to_hp_conversion_factor\": 0.25,\n\t\"grid_to_battery_efficiency\": 0.95,\n\t\"load_filename\": \"USA_CA_Sacramento.Metro.AP.724839_TMY3_LOW.csv\",\n\t\"max_wh_load\": 0.0,\n\t\"no_pv_tariff_filename\": \"PG-and-E-E-1.xlsx\",\n\t\"optimization_objective\": \"Time of use\",\n\t\"pp_baseline_end_time_in_hours\": 18.0,\n\t\"pp_baseline_start_time_in_hours\": 12.0,\n\t\"pp_power\": 0,\n\t\"pv_filename\": \"PVSim Results - Stockton_AC - 2015.9.21.xlsx\",\n\t\"pv_plus_em_tariff_filename\": \"PG-and-E TOU-B.xlsx\",\n\t\"pv_systemsize\": 2015,\n\t\"pv_systemsize_base\": 6.25,\n\t\"pv_to_battery_efficiency\": 0.9014,\n\t\"water_heater\": \"Default\",\n\t\"yield_value\": 1756.68,\n\t\"load_source\": \"external\" \n\n}\n         "
+							"raw": "{\n        \"pv_configuration\":{\n            \"Shortname\":\"{{$timestamp}}_pvconfiguration_shortname\",\n            \"Street_And_Number\": \"50 Cape Cod\",\n            \"City\": \"Irvine\",\n            \"State\": \"CA\",\n            \"Country\" :\"US\",  \n            \"Zipcode\": 92620,\n            \"SystemAzimuth\": 0.0,\n            \"MountingSurfaceSlope\": 18.4,\n            \"PVModuleId\": 654, \n            \"MountingSystemId\": 22,    \n            \"StandardInverterId\": 1043, \n            \"InverterCount\": 40,\n            \"ParallelStringCount\": 40,\n            \"MonthlyShading\": [\n                0,\n                0,\n                0,\n                0,\n                0,\n                0,\n                0,\n                0,\n                0,\n                0,\n                0,\n                0\n            ]},         \n        \"tariffengine_input\": {\n            \"new_account\": false,\n            \"provider_account_id\": \"provider_account_id0\",\n            \"tariff_input_name\": \"tariff_input_name\",\n            \"account_name\": \"vet_demo_account\",\n            \"lse_id\": 100747,\n            \"master_tariff_id\": \"3250717\",\n            \"before_solar_tariff_id\": \"3250717\",\n            \"after_solar_tariff_id\": \"3250717\",\n            \"rate_inflation_before_tariff\": \"1.5\",\n            \"rate_inflation_after_tariff\": \"1.5\",\n            \"rate_inflation_solar\": \"1.25\",\n            \"solar_degradation\": \"1.5\",\n            \"solar_price\": 50,\n            \"monthly_consumption_from_user\": [2000,2100,2000,2100,2000,2100,2000,2100,2000,2100,2000,2100],\n            \"address_string\": \"20480 Chapel Drive, Monte Rio 95462\",\n            \"solar_profile_id\": \"solar_profile_id34\",\n            \"system_size\": 3,\n            \"load_profile_id\": \"load_profile_id34\",\n            \"customer_class_value\": \"1\"\n            },\n        \"fineng_input\": {\n            \"quote_id\":123456,\n            \"time_stamp\":\"2015-09-27T00:00:00.000-0500\",\n            \"business_sector\":\"Residential\",\n            \"channel\":\"Indirect\",\n            \"financing_option\":\"lease\",\n            \"state_abbrev\":\"CA\",\n            \"utility\":\"PGE\",\n            \"utility_id\":\"CA_II\",\n            \"dealer\":\"Any Dealer\",\n            \"dealer_id\":\"0018000000prb4aAAA\",\n            \"dealer_oracle_id\":45678,\n            \"system_size\":5.0,\n            \"year_1_production\":5400,\n            \"system_price\":60000.0,\n            \"pricing_cost\":24474.3,\n            \"dealer_fee\":12750,\n            \"state_rebate\":0.0,\n            \"down_payment\":0.0,\n            \"escalator_rate\":0.0,\n            \"state_incentive\":[0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1],\n            \"inverter_name\":[\"SMA sunny Boy\",\"another\"],\n            \"inverter_id\":[5678,567999],\n            \"inverter_quantity\":[3,1],\n            \"panel_type\":\"dc\",\n            \"pv_model\":\"327W WHT\",\n            \"pv_model_name\":\"327 WHT\",\n            \"number_of_modules\":12,\n            \"nem2_identifier\":0,\n            \"monthly_bill_before\":100.7,\n            \"monthly_bill_after\":50.8\n            },\n         \"model_input_shortname\": \"{{$timestamp}}_model_input_shortname\",\n         \"adjusted_load\": 12000.0,\n         \"adjusted_yield\": 1700.0,\n         \"annual_battery_degrad_rate\": 0.02,\n         \"arrive_time_in_hours_from_noon\": 6.0,\n         \"baseline_end_time_in_hours_from_noon\": 9.0,\n         \"battery_energy_capacity\": 30.0,\n         \"battery_max_power\": 3.0,\n         \"battery_to_load_efficiency\": 0.95,\n         \"degradation_factor\": 0.0025,\n         \"degradation_model\": \"full\",\n         \"dep_time_in_hours_from_noon\": 20.0,\n         \"discharge_end_time\": 23.0,\n         \"discharge_start_time\": 19.0,\n         \"electric_water_heating\": \"No\",\n         \"ev_battery_capacity\": 30.0,\n         \"ev_charging_power\": 6.0,\n         \"gas_to_hp_conversion_factor\": 0.25,\n         \"grid_to_battery_efficiency\": 0.95,\n         \"max_wh_load\": 0.0,\n         \"no_pv_tariff_filename\": \"PG-and-E-E-1.xlsx\",\n         \"optimization_objective\": \"Time of use\",\n         \"pp_baseline_end_time_in_hours\": 18.0,\n         \"pp_baseline_start_time_in_hours\": 12.0,\n         \"pp_power\": 1.4,\n         \"pv_filename\": \"PVSim Results - Stockton_AC - 2015.9.21.xlsx\",\n         \"pv_only_tariff_filename\": \"PG-and-E TOU-B-Month-Netting.xlsx\", \n         \"pv_plus_em_tariff_filename\": \"PG-and-E TOU-B.xlsx\",\n         \"pv_systemsize\": 2015,\n         \"pv_systemsize_base\": 6.25,\n         \"pv_to_battery_efficiency\": 0.9014,\n         \"water_heater\": \"Default\",\n         \"yield_value\": 1756.68,\n         \"loadlocal\": \"{{loadlocal_filename}}\"\n}"
 						},
 						"description": "Generated from a curl request: \ncurl -X POST -H \\\"Accept: application/json\\\" -H \\\"X-CSRFToken: yGXetadw771nTTkNkankd9OeNAlbDqwsXOCUWLT3W7LgmxeCnIbkkyrXAFvQq5Ab\\\" -H \\\"Authorization: Basic c21hcnRlbmVyZ3lTdXBlcnVzZXI6c3VucG93ZXIx\\\" -H \\\"Content-Type: application/json\\\" -H \\\"Cache-Control: no-cache\\\" -H \\\"Postman-Token: 03a96f52-d6a9-daf4-7882-8b3ad21bc2a0\\\" -d '{\n        \\\"pv_configuration\\\":{\n            \\\"Shortname\\\":\\\"Sept29loadlocal 1\\\",\n            \\\"Street_And_Number\\\": \\\"50 Cape Cod\\\",\n            \\\"City\\\": \\\"Irvine\\\",\n            \\\"State\\\": \\\"CA\\\",\n            \\\"Country\\\" :\\\"US\\\",  \n            \\\"Zipcode\\\": 92620,\n            \\\"SystemAzimuth\\\": 0.0,\n            \\\"MountingSurfaceSlope\\\": 18.4,\n            \\\"PVModuleId\\\": 654, \n            \\\"MountingSystemId\\\": 22,    \n            \\\"StandardInverterId\\\": 1043, \n            \\\"InverterCount\\\": 40,\n            \\\"ParallelStringCount\\\": 40,\n            \\\"MonthlyShading\\\": [\n                0,\n                0,\n                0,\n                0,\n                0,\n                0,\n                0,\n                0,\n                0,\n                0,\n                0,\n                0\n            ]},         \n        \\\"tariffengine_input\\\": {\n            \\\"new_account\\\": false,\n            \\\"provider_account_id\\\": \\\"provider_account_id0\\\",\n            \\\"tariff_input_name\\\": \\\"tariff_input_name\\\",\n            \\\"account_name\\\": \\\"vet_demo_account\\\",\n            \\\"lse_id\\\": 100747,\n            \\\"master_tariff_id\\\": \\\"3250717\\\",\n            \\\"before_solar_tariff_id\\\": \\\"3250717\\\",\n            \\\"after_solar_tariff_id\\\": \\\"3250717\\\",\n            \\\"rate_inflation_before_tariff\\\": \\\"1.5\\\",\n            \\\"rate_inflation_after_tariff\\\": \\\"1.5\\\",\n            \\\"rate_inflation_solar\\\": \\\"1.25\\\",\n            \\\"solar_degradation\\\": \\\"1.5\\\",\n            \\\"solar_price\\\": 50,\n            \\\"monthly_consumption_from_user\\\": [2000,2100,2000,2100,2000,2100,2000,2100,2000,2100,2000,2100],\n            \\\"address_string\\\": \\\"20480 Chapel Drive, Monte Rio 95462\\\",\n            \\\"solar_profile_id\\\": \\\"solar_profile_id34\\\",\n            \\\"system_size\\\": 3,\n            \\\"load_profile_id\\\": \\\"load_profile_id34\\\",\n            \\\"customer_class_value\\\": \\\"1\\\"\n            },\n        \\\"fineng_input\\\": {\n            \\\"quote_id\\\":123456,\n            \\\"time_stamp\\\":\\\"2015-09-27T00:00:00.000-0500\\\",\n            \\\"business_sector\\\":\\\"Residential\\\",\n            \\\"channel\\\":\\\"Indirect\\\",\n            \\\"financing_option\\\":\\\"lease\\\",\n            \\\"state_abbrev\\\":\\\"CA\\\",\n            \\\"utility\\\":\\\"PGE\\\",\n            \\\"utility_id\\\":\\\"CA_II\\\",\n            \\\"dealer\\\":\\\"Any Dealer\\\",\n            \\\"dealer_id\\\":\\\"0018000000prb4aAAA\\\",\n            \\\"dealer_oracle_id\\\":45678,\n            \\\"system_size\\\":5.0,\n            \\\"year_1_production\\\":5400,\n            \\\"system_price\\\":60000.0,\n            \\\"pricing_cost\\\":24474.3,\n            \\\"dealer_fee\\\":12750,\n            \\\"state_rebate\\\":0.0,\n            \\\"down_payment\\\":0.0,\n            \\\"escalator_rate\\\":0.0,\n            \\\"state_incentive\\\":[0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1],\n            \\\"inverter_name\\\":[\\\"SMA sunny Boy\\\",\\\"another\\\"],\n            \\\"inverter_id\\\":[5678,567999],\n            \\\"inverter_quantity\\\":[3,1],\n            \\\"panel_type\\\":\\\"dc\\\",\n            \\\"pv_model\\\":\\\"327W WHT\\\",\n            \\\"pv_model_name\\\":\\\"327 WHT\\\",\n            \\\"number_of_modules\\\":12,\n            \\\"nem2_identifier\\\":0,\n            \\\"monthly_bill_before\\\":100.7,\n            \\\"monthly_bill_after\\\":50.8\n            },\n         \\\"model_input_shortname\\\": \\\"Sept29 modelinput 1\\\",\n         \\\"adjusted_load\\\": 12000.0,\n         \\\"adjusted_yield\\\": 1700.0,\n         \\\"annual_battery_degrad_rate\\\": 0.02,\n         \\\"arrive_time_in_hours_from_noon\\\": 6.0,\n         \\\"baseline_end_time_in_hours_from_noon\\\": 9.0,\n         \\\"battery_energy_capacity\\\": 30.0,\n         \\\"battery_max_power\\\": 3.0,\n         \\\"battery_to_load_efficiency\\\": 0.95,\n         \\\"degradation_factor\\\": 0.0025,\n         \\\"degradation_model\\\": \\\"full\\\",\n         \\\"dep_time_in_hours_from_noon\\\": 20.0,\n         \\\"discharge_end_time\\\": 23.0,\n         \\\"discharge_start_time\\\": 19.0,\n         \\\"electric_water_heating\\\": \\\"No\\\",\n         \\\"ev_battery_capacity\\\": 30.0,\n         \\\"ev_charging_power\\\": 6.0,\n         \\\"gas_to_hp_conversion_factor\\\": 0.25,\n         \\\"grid_to_battery_efficiency\\\": 0.95,\n         \\\"load_filename\\\": \\\"USA_CA_Sacramento.Metro.AP.724839_TMY3_LOW.csv\\\",\n         \\\"max_wh_load\\\": 0.0,\n         \\\"no_pv_tariff_filename\\\": \\\"PG-and-E-E-1.xlsx\\\",\n         \\\"optimization_objective\\\": \\\"Time of use\\\",\n         \\\"pp_baseline_end_time_in_hours\\\": 18.0,\n         \\\"pp_baseline_start_time_in_hours\\\": 12.0,\n         \\\"pp_power\\\": 1.4,\n         \\\"pv_filename\\\": \\\"PVSim Results - Stockton_AC - 2015.9.21.xlsx\\\",\n         \\\"pv_only_tariff_filename\\\": \\\"PG-and-E TOU-B-Month-Netting.xlsx\\\", \n         \\\"pv_plus_em_tariff_filename\\\": \\\"PG-and-E TOU-B.xlsx\\\",\n         \\\"pv_systemsize\\\": 2015,\n         \\\"pv_systemsize_base\\\": 6.25,\n         \\\"pv_to_battery_efficiency\\\": 0.9014,\n         \\\"water_heater\\\": \\\"Default\\\",\n         \\\"yield_value\\\": 1756.68,\n         \\\"loadlocal\\\": {\\\"name\\\":\\\"EOS550\\\"}\n}' http://dev-vetaws01.sunpowercorp.com/VET/QuoteEng/\n"
 					},
@@ -833,23 +713,8 @@
 						"method": "DELETE",
 						"header": [
 							{
-								"key": "Pragma",
-								"value": "no-cache",
-								"description": ""
-							},
-							{
-								"key": "Accept-Language",
-								"value": "en-US,en;q=0.8",
-								"description": ""
-							},
-							{
 								"key": "Accept",
 								"value": "application/json",
-								"description": ""
-							},
-							{
-								"key": "Authorization",
-								"value": "Basic c21hcnRlbmVyZ3lTdXBlcnVzZXI6c3VucG93ZXIx",
 								"description": ""
 							},
 							{
@@ -858,23 +723,8 @@
 								"description": ""
 							},
 							{
-								"key": "Postman-Token",
-								"value": "a2310084-eb0e-f6f8-aac7-177ab955efd5",
-								"description": ""
-							},
-							{
-								"key": "Pragma",
-								"value": "no-cache",
-								"description": ""
-							},
-							{
-								"key": "Postman-Token",
-								"value": "a2310084-eb0e-f6f8-aac7-177ab955efd5",
-								"description": ""
-							},
-							{
-								"key": "Accept-Language",
-								"value": "en-US,en;q=0.8",
+								"key": "Authorization",
+								"value": "Basic c21hcnRlbmVyZ3lTdXBlcnVzZXI6c3VucG93ZXIx",
 								"description": ""
 							}
 						],
