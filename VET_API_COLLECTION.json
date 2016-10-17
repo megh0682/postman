@@ -172,7 +172,7 @@
 							"formdata": [
 								{
 									"key": "upload",
-									"src": "//:0",
+									"src": "#",
 									"type": "file",
 									"enabled": true
 								},
